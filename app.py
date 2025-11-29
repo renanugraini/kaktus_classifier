@@ -1,9 +1,9 @@
 import streamlit as st
 import numpy as np
+import tensorflow as tf
 from PIL import Image
-import tflite_runtime.interpreter as tflite
 
-st.title("Klasifikasi Jenis Kaktus 🌵")
+st.title("Klasifikasi Jenis Kaktus")
 st.write("Upload gambar kaktus untuk mengetahui jenisnya.")
 
 uploaded_file = st.file_uploader("Upload gambar...", type=["jpg", "png", "jpeg"])
