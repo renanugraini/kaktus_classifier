@@ -3,11 +3,6 @@ import numpy as np
 from PIL import Image
 import tflite_runtime.interpreter as tflite
 
-import streamlit as st
-import numpy as np
-from PIL import Image
-import tflite_runtime.interpreter as tflite
-
 st.title("Klasifikasi Jenis Kaktus 🌵")
 st.write("Upload gambar kaktus untuk mengetahui jenisnya.")
 
