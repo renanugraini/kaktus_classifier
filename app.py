@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-import tensorflow as tf
+from tensorflow.lite import Interpreter
 from PIL import Image
 
 st.title("Klasifikasi Jenis Kaktus")
@@ -9,7 +9,7 @@ st.write("Upload gambar kaktus untuk mengetahui jenisnya.")
 uploaded_file = st.file_uploader("Upload gambar...", type=["jpg", "png", "jpeg"])
 
 # Load TFLite model
-interpreter = tflite.Interpreter(model_path="model_kaktus.tflite")
+interpreter = Interpreter(model_path="model_kaktus.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
