@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-from tensorflow.lite import Interpreter
+from tflite_runtime.interpreter import Interpreter
 from PIL import Image
 
 st.title("Klasifikasi Jenis Kaktus")
