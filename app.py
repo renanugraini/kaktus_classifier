@@ -33,7 +33,7 @@ if not os.path.exists(MODEL_PATH):
 import tensorflow as tf
 model = tf.keras.models.load_model(MODEL_PATH)
 
-# Daftar nama kelas — ganti sesuai label datasetmu
+# Daftar nama kelas
 class_names = ["Astrophytum asteria", "Ferocactus", "Gymnocalycium"]
 
 st.title("🌵 Klasifikasi Jenis Kaktus")
