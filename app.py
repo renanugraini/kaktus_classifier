@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 # Judul
 st.title("🌵 Kaktus Classifier - Image Recognition App")
