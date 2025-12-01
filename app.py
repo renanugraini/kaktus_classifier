@@ -118,7 +118,7 @@ def generate_pdf(image, pred_label, probs, labels):
 
     # Bar chart
     buf = io.BytesIO()
-    fig, ax = plt.subplots(figsize=(15,4))
+    fig, ax = plt.subplots(figsize=(14,5))
     ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
     ax.set_ylim(0,1)
     ax.set_ylabel("Probabilitas")
@@ -167,15 +167,17 @@ if page == "Fakta & Sejarah Kaktus":
 # HALAMAN 2: Prediksi Kaktus
 # ====================================================
 if page == "Prediksi Kaktus":
+    #box upload image
     uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
     st.markdown("<div style='background-color:#fcf8e3; padding:25px; border-radius:14px; \
              box-shadow:0px 4px 20px rgba(0,0,0,0.06); text-align:center;'>", unsafe_allow_html=True)
-st.image(image, caption="Gambar yang diupload", use_column_width=True)
-st.markdown("</div>", unsafe_allow_html=True)
+    st.image(image, caption="Gambar yang diupload", use_column_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div style='background-color:#d9edf7; padding:15px; border-radius:10px; margin-top:15px;'>", unsafe_allow_html=True)
-st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
-st.markdown("</div>", unsafe_allow_html=True)
+    #box hasil prediksi
+    st.markdown("<div style='background-color:#d9edf7; padding:15px; border-radius:10px; margin-top:15px;'>", unsafe_allow_html=True)
+    st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
+    st.markdown("</div>", unsafe_allow_html=True)
 
         if st.button("🔍 Prediksi"):
             arr = preprocess(image)
