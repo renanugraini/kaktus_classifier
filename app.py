@@ -109,7 +109,7 @@ def generate_pdf(image, pred_label, probs, labels):
 
     # --- Draw bar chart below text ---
     buf = io.BytesIO()
-    fig, ax = plt.subplots(figsize=(5,3))
+    fig, ax = plt.subplots(figsize=(6,4))
     ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
     ax.set_ylim(0, 1)
     ax.set_ylabel("Probabilitas")
@@ -119,8 +119,8 @@ def generate_pdf(image, pred_label, probs, labels):
     plt.close(fig)
     buf.seek(0)
     chart_reader = ImageReader(buf)
-    chart_w = 260
-    chart_h = 200
+    chart_w = 320
+    chart_h = 240
     # tempat chart di bawah tabel
     c.drawImage(chart_reader, (w - chart_w)/2, y_text - chart_h - 10, chart_w, chart_h)
 
