@@ -78,7 +78,6 @@ def predict(interpreter, input_details, output_details, array):
 # GENERATE PDF
 # ====================================================
 def generate_pdf(image, pred_label, probs, labels):
-    # probs: numpy array shape (n_classes,)
     temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     pdf_path = temp.name
 
@@ -90,18 +89,27 @@ def generate_pdf(image, pred_label, probs, labels):
     c.drawCentredString(w/2, h - 80, "Hasil Prediksi Klasifikasi Kaktus")
 
     # --- Draw uploaded image ---
-    # Resize image for PDF placement (keperluan proporsi)
     img_for_pdf = image.copy().convert("RGB")
-    # create an ImageReader from PIL image
     img_reader = ImageReader(img_for_pdf)
     img_w = 240
     img_h = 240
-    c.drawImage(img_reader, 60, h - 120 - img_h, img_w, img_h)  # kiri
+    c.drawImage(img_reader, (w - img_w)/2, h - 120 - img_h, img_w, img_h)  # di tengah
 
-    # --- Draw bar chart into BytesIO and insert ---
-    import matplotlib.pyplot as plt
+    # --- Prediction text ---
+    c.setFont("Helvetica-Bold", 14)
+    y_text = h - 120 - img_h - 30
+    c.drawCentredString(w/2, y_text, f"Prediksi : {pred_label}")
+
+    # --- Probabilities table ---
+    c.setFont("Helvetica", 12)
+    y_text -= 25
+    for i, p in enumerate(probs):
+        c.drawCentredString(w/2, y_text, f"{labels[i]} : {p:.4f}")
+        y_text -= 18
+
+    # --- Draw bar chart below text ---
     buf = io.BytesIO()
-    fig, ax = plt.subplots(figsize=(4,3))  # ukuran figure
+    fig, ax = plt.subplots(figsize=(5,3))
     ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
     ax.set_ylim(0, 1)
     ax.set_ylabel("Probabilitas")
@@ -113,19 +121,8 @@ def generate_pdf(image, pred_label, probs, labels):
     chart_reader = ImageReader(buf)
     chart_w = 260
     chart_h = 200
-    # place chart to the right of image
-    c.drawImage(chart_reader, 320, h - 120 - chart_h, chart_w, chart_h)
-
-    # --- Prediction text and table under images ---
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(60, h - 120 - img_h - 30, f"Prediksi : {pred_label}")
-
-    c.setFont("Helvetica", 12)
-    y = h - 120 - img_h - 55
-    for i, p in enumerate(probs):
-        # write class and probability
-        c.drawString(60, y, f"{labels[i]} : {p:.4f}")
-        y -= 18
+    # tempat chart di bawah tabel
+    c.drawImage(chart_reader, (w - chart_w)/2, y_text - chart_h - 10, chart_w, chart_h)
 
     c.save()
     buf.close()
