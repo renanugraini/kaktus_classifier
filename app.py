@@ -77,28 +77,59 @@ def predict(interpreter, input_details, output_details, array):
 # ====================================================
 # GENERATE PDF
 # ====================================================
-def generate_pdf(image, pred_label, prob):
+def generate_pdf(image, pred_label, probs, labels):
+    # probs: numpy array shape (n_classes,)
     temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     pdf_path = temp.name
 
     c = canvas.Canvas(pdf_path, pagesize=A4)
     w, h = A4
 
+    # Title
     c.setFont("Helvetica-Bold", 20)
     c.drawCentredString(w/2, h - 80, "Hasil Prediksi Klasifikasi Kaktus")
 
-    img_reader = ImageReader(image)
-    img_w = 280
-    img_h = 280
-    c.drawImage(img_reader, (w - img_w) / 2, h - 380, img_w, img_h)
+    # --- Draw uploaded image ---
+    # Resize image for PDF placement (keperluan proporsi)
+    img_for_pdf = image.copy().convert("RGB")
+    # create an ImageReader from PIL image
+    img_reader = ImageReader(img_for_pdf)
+    img_w = 240
+    img_h = 240
+    c.drawImage(img_reader, 60, h - 120 - img_h, img_w, img_h)  # kiri
 
-    c.setFont("Helvetica", 14)
-    c.drawString(80, h - 420, f"Prediksi : {pred_label}")
-    c.drawString(80, h - 440, f"Akurasi : {prob:.4f}")
+    # --- Draw bar chart into BytesIO and insert ---
+    import matplotlib.pyplot as plt
+    buf = io.BytesIO()
+    fig, ax = plt.subplots(figsize=(4,3))  # ukuran figure
+    ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
+    ax.set_ylim(0, 1)
+    ax.set_ylabel("Probabilitas")
+    ax.set_title("Probabilitas per Kelas")
+    plt.tight_layout()
+    fig.savefig(buf, format='png', dpi=150)
+    plt.close(fig)
+    buf.seek(0)
+    chart_reader = ImageReader(buf)
+    chart_w = 260
+    chart_h = 200
+    # place chart to the right of image
+    c.drawImage(chart_reader, 320, h - 120 - chart_h, chart_w, chart_h)
+
+    # --- Prediction text and table under images ---
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(60, h - 120 - img_h - 30, f"Prediksi : {pred_label}")
+
+    c.setFont("Helvetica", 12)
+    y = h - 120 - img_h - 55
+    for i, p in enumerate(probs):
+        # write class and probability
+        c.drawString(60, y, f"{labels[i]} : {p:.4f}")
+        y -= 18
 
     c.save()
+    buf.close()
     return pdf_path
-
 
 # ====================================================
 # UI
@@ -156,7 +187,8 @@ if uploaded:
         # ====================================================
         # DOWNLOAD PDF
         # ====================================================
-        pdf_path = generate_pdf(image, pred_label, prob)
+        pdf_path = generate_pdf(image, pred_label, probs, labels)
+
 
         with open(pdf_path, "rb") as f:
             st.download_button(
