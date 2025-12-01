@@ -1,225 +1,148 @@
 import streamlit as st
 import numpy as np
 import tensorflow as tf
-from PIL import Image, ImageEnhance
-import io, json, os, time
-import matplotlib.pyplot as plt
+from PIL import Image
+import json
+import io
+import os
+import tempfile
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
 
-# ============================================================
-# CONFIG
-# ============================================================
-st.set_page_config(
-    page_title="Klasifikasi Kaktus",
-    page_icon="🌵",
-    layout="centered"
-)
+# ====================================================
+# PAGE CONFIG & STYLE
+# ====================================================
+st.set_page_config(page_title="Klasifikasi Kaktus", page_icon="🌵", layout="centered")
 
-# ============================================================
-# CSS + THEME + LOGO
-# ============================================================
 st.markdown("""
 <style>
-
-/* BG Gradient */
-body {
-    background: linear-gradient(120deg, #f9f9f9, #f1fdf6);
-}
-
-/* Fade animation */
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(6px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-.fade { animation: fadeIn 1.2s ease-in-out; }
-
-/* Header */
-.title {
-  font-size: 42px;
-  font-weight: 800;
-  text-align: center;
-  margin-top: 5px;
-  color: #2b2b2b;
+body { background-color: #fafafa; }
+.main-title {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
 }
 .subtext {
-  text-align: center;
-  color: #666;
-  font-size: 18px;
+    text-align: center;
+    font-size: 18px;
+    color: #666;
 }
-
-/* Card */
-.card {
-  background: white;
-  padding: 22px;
-  border-radius: 18px;
-  box-shadow: 0px 8px 25px rgba(0,0,0,0.08);
-  transition: 0.25s;
+.box {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.06);
+    text-align: center;
 }
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0px 14px 28px rgba(0,0,0,0.12);
-}
-
-/* Button */
-button {
-  transition: 0.2s;
-}
-button:hover {
-  transform: scale(1.03);
-}
-
-/* DARK MODE */
-@media (prefers-color-scheme: dark) {
- body { background: #1a1a1a; }
- .title { color: white; }
- .subtext { color: #ccc; }
- .card {
-    background: #2b2b2b;
-    box-shadow: 0px 6px 20px rgba(255,255,255,0.05);
- }
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-# ============================================================
-# HEADER
-# ============================================================
-st.markdown("<div class='title fade'>🌵 Klasifikasi Tanaman Kaktus</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtext fade'>Upload atau ambil foto — biarkan AI mengenali jenis kaktus</div>", unsafe_allow_html=True)
 
-# ============================================================
+# ====================================================
 # LOAD MODEL
-# ============================================================
+# ====================================================
 @st.cache_resource
-def load_tflite():
-    interpreter = tf.lite.Interpreter("model_kaktus.tflite")
+def load_tflite_model(model_path="model_kaktus.tflite"):
+    interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
     return interpreter, interpreter.get_input_details(), interpreter.get_output_details()
 
-interpreter, input_details, output_details = load_tflite()
+def load_class_labels(path="class_labels.json"):
+    if os.path.exists(path):
+        return json.load(open(path))
+    return ["Astrophytum asteria", "Ferocactus", "Gymnocalycium"]
 
-# ============================================================
-# LABEL
-# ============================================================
-def load_labels():
-    with open("class_labels.json", "r") as f:
-        return json.load(f)
-        
-labels = load_labels()
 
-# ============================================================
-# ENHANCEMENT (Auto Improve)
-# ============================================================
-def auto_enhance(img):
-    img = ImageEnhance.Brightness(img).enhance(1.1)
-    img = ImageEnhance.Contrast(img).enhance(1.15)
-    img = ImageEnhance.Color(img).enhance(1.1)
-    return img
-
-# ============================================================
-# PREDICT
-# ============================================================
-def predict(img):
-    img = img.convert("RGB").resize((150,150))
+# ====================================================
+# PREPROCESS & PREDICT
+# ====================================================
+def preprocess(img):
+    img = img.convert("RGB")
+    img = img.resize((150,150))
     arr = np.array(img).astype("float32") / 255.0
-    arr = np.expand_dims(arr, 0)
+    return np.expand_dims(arr, axis=0)
 
-    interpreter.set_tensor(input_details[0]['index'], arr)
+def predict(interpreter, input_details, output_details, array):
+    interpreter.set_tensor(input_details[0]["index"], array)
     interpreter.invoke()
-    o = interpreter.get_tensor(output_details[0]['index'])[0]
+    output = interpreter.get_tensor(output_details[0]["index"])
+    probs = np.squeeze(output)
+    return probs
 
-    idx = int(np.argmax(o))
-    return labels[idx], o
 
-# ============================================================
-# MAIN CARD
-# ============================================================
-st.markdown("<div class='card fade'>", unsafe_allow_html=True)
+# ====================================================
+# GENERATE PDF
+# ====================================================
+def generate_pdf(image, pred_label, prob):
+    temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    pdf_path = temp.name
 
-mode = st.radio("Pilih sumber gambar:", ["📤 Upload", "📷 Kamera"], horizontal=True)
-img = None
+    c = canvas.Canvas(pdf_path, pagesize=A4)
+    w, h = A4
 
-# Mode upload
-if mode == "📤 Upload":
-    uploaded = st.file_uploader("Upload gambar kaktus", type=["jpg","png","jpeg"])
-    if uploaded:
-        img = Image.open(uploaded)
+    # Title
+    c.setFont("Helvetica-Bold", 20)
+    c.drawCentredString(w/2, h - 80, "Hasil Prediksi Klasifikasi Kaktus")
 
-# Mode kamera
+    # Insert image
+    img_reader = ImageReader(image)
+    img_w = 280
+    img_h = 280
+    c.drawImage(img_reader, (w - img_w) / 2, h - 380, img_w, img_h)
+
+    # Prediction text
+    c.setFont("Helvetica", 14)
+    c.drawString(80, h - 420, f"Prediksi : {pred_label}")
+    c.drawString(80, h - 440, f"Akurasi : {prob:.4f}")
+
+    c.save()
+    return pdf_path
+
+
+# ====================================================
+# UI
+# ====================================================
+st.markdown("<div class='main-title'>🌵 Klasifikasi Tanaman Kaktus</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtext'>Upload gambar kaktus dan lihat prediksinya</div>", unsafe_allow_html=True)
+st.write("")
+
+with st.spinner("Memuat model..."):
+    interpreter, input_details, output_details = load_tflite_model()
+
+labels = load_class_labels()
+
+uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
+
+if uploaded:
+    image = Image.open(uploaded)
+
+    st.markdown("<div class='box'>", unsafe_allow_html=True)
+    st.image(image, caption="Gambar yang diupload", use_column_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if st.button("🔍 Prediksi"):
+        arr = preprocess(image)
+        probs = predict(interpreter, input_details, output_details, arr)
+
+        idx = int(np.argmax(probs))
+        pred_label = labels[idx]
+        prob = float(probs[idx])
+
+        st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
+
+        # PDF GENERATION
+        pdf_path = generate_pdf(image, pred_label, prob)
+
+        with open(pdf_path, "rb") as f:
+            st.download_button(
+                "📄 Download Hasil Prediksi (PDF)",
+                data=f,
+                file_name="hasil_prediksi_kaktus.pdf",
+                mime="application/pdf"
+            )
+
 else:
-    cam = st.camera_input("Ambil Foto")
-    if cam:
-        img = Image.open(cam)
-
-# ============================================================
-# Jika gambar ada → tampilkan
-# ============================================================
-if img:
-    st.image(img, caption="Gambar asli", width=300)
-
-    enhanced = auto_enhance(img)
-    st.image(enhanced, caption="Gambar setelah peningkatan kualitas", width=300)
-
-    # Tombol prediksi
-    if st.button("🔍 Prediksi", use_container_width=True):
-
-        progress = st.progress(0)
-        for i in range(100):
-            time.sleep(0.01)
-            progress.progress(i+1)
-
-        label, probs = predict(enhanced)
-
-        st.success(f"🌟 Jenis Kaktus: **{label}**")
-        
-        # Probabilities
-        st.write("### Probabilitas")
-        for i,p in enumerate(probs):
-            st.write(f"- **{labels[i]}** → `{p:.4f}`")
-
-        # ============================================================
-        #  BAR CHART PROBABILITY
-        # ============================================================
-        fig, ax = plt.subplots()
-        ax.bar(labels, probs)
-        ax.set_title("Grafik Probabilitas")
-        st.pyplot(fig)
-
-        # ============================================================
-        #  DOWNLOAD HASIL
-        # ============================================================
-        if st.button("⬇️ Download hasil prediksi (.txt)", use_container_width=True):
-            text = f"Hasil Prediksi\nJenis: {label}\n\nProbabilitas:\n"
-            for i,p in enumerate(probs):
-                text += f"- {labels[i]}: {p:.4f}\n"
-
-            st.download_button("Simpan File", text, file_name="hasil_prediksi.txt")
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-
-# ============================================================
-# HALAMAN INFORMASI MODEL
-# ============================================================
-with st.expander("📘 Tentang Model"):
-    st.write("""
-### Arsitektur Model
-Model ini menggunakan CNN (Convolutional Neural Network) dengan TensorFlow Lite.
-
-### Dataset
-3 jenis kaktus:
-- Astrophytum asteria
-- Ferocactus
-- Gymnocalycium
-
-### Augmentasi:
-- Rotation  
-- Zoom  
-- Horizontal flip  
-- Vertical flip  
-
-### Training
-- Epochs: 50  
-- Input size: 150 × 150 px  
-- Batch size: 32  
-    """)
+    st.info("Silakan upload gambar untuk memulai prediksi.")
