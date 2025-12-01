@@ -174,7 +174,7 @@ if page == "Prediksi Kaktus":
         # Box upload image berwarna
         st.markdown("<div style='background-color:#fcf8e3; padding:25px; border-radius:14px; \
                      box-shadow:0px 4px 20px rgba(0,0,0,0.06); text-align:center;'>", unsafe_allow_html=True)
-        st.image(image, caption="Gambar yang diupload", use_column_width=True)
+        st.image(image, caption="Gambar yang diupload", use_column_width=300)
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.button("🔍 Prediksi"):
