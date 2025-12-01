@@ -42,11 +42,13 @@ body { background-color: #fafafa; }
 """, unsafe_allow_html=True)
 
 st.markdown("<div class='main-title'>🌵 Klasifikasi Tanaman Kaktus</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtext'>Aplikasi sederhana untuk memprediksi jenis kaktus</div>", unsafe_allow_html=True)
+st.write("")
 
 # ====================================================
-# PAGE SELECTION (TANPA SIDEBAR)
+# PAGE SELECTION TANPA SIDEBAR
 # ====================================================
-page = st.radio("Pilih halaman:", ["Fakta / Sejarah Kaktus", "Prediksi Kaktus"])
+page = st.radio("Menu Utama:", ["Fakta & Sejarah Kaktus", "Prediksi Kaktus"])
 
 # ====================================================
 # LOAD MODEL & LABELS
@@ -82,7 +84,7 @@ def predict(interpreter, input_details, output_details, array):
     return probs
 
 # ====================================================
-# PDF GENERATION FUNCTION (SAMA SEPERTI SEBELUMNYA)
+# PDF GENERATION FUNCTION
 # ====================================================
 def generate_pdf(image, pred_label, probs, labels):
     temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
@@ -90,25 +92,30 @@ def generate_pdf(image, pred_label, probs, labels):
     c = canvas.Canvas(pdf_path, pagesize=A4)
     w, h = A4
 
+    # Title
     c.setFont("Helvetica-Bold", 20)
     c.drawCentredString(w/2, h - 80, "Hasil Prediksi Klasifikasi Kaktus")
 
+    # Image
     img_for_pdf = image.copy().convert("RGB")
     img_reader = ImageReader(img_for_pdf)
     img_w = 240
     img_h = 240
     c.drawImage(img_reader, (w - img_w)/2, h - 120 - img_h, img_w, img_h)
 
+    # Prediction text
     c.setFont("Helvetica-Bold", 14)
     y_text = h - 120 - img_h - 30
     c.drawCentredString(w/2, y_text, f"Prediksi : {pred_label}")
 
+    # Probabilities table
     c.setFont("Helvetica", 12)
     y_text -= 25
     for i, p in enumerate(probs):
         c.drawCentredString(w/2, y_text, f"{labels[i]} : {p:.4f}")
         y_text -= 18
 
+    # Bar chart
     buf = io.BytesIO()
     fig, ax = plt.subplots(figsize=(14,5))
     ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
@@ -129,17 +136,29 @@ def generate_pdf(image, pred_label, probs, labels):
     return pdf_path
 
 # ====================================================
-# HALAMAN 1: Fakta / Sejarah Kaktus
+# HALAMAN 1: Fakta & Sejarah Kaktus
 # ====================================================
-if page == "Fakta / Sejarah Kaktus":
+if page == "Fakta & Sejarah Kaktus":
     st.markdown("""
-    <div style="background-color:#dff0d8; padding:20px; border-radius:15px; margin-bottom:20px;">
-        <h3 style="color:#3c763d; text-align:center;">📖 Fakta & Sejarah Kaktus</h3>
+    <div style="background-color:#fdf5e6; padding:25px; border-radius:15px; margin-bottom:20px; box-shadow:0px 4px 15px rgba(0,0,0,0.05);">
+        <h2 style="color:#2c6e49; text-align:center;">📖 Fakta & Sejarah Kaktus</h2>
         <p style="text-align:justify; color:#3c763d; font-size:15px;">
-            Kaktus adalah tanaman yang termasuk keluarga Cactaceae, dikenal dengan kemampuan bertahan di daerah gurun yang kering. 
-            Kaktus memiliki batang yang berdaging untuk menyimpan air, dan duri sebagai pengganti daun untuk mengurangi penguapan. 
-            Tanaman ini pertama kali dikenal di Amerika dan telah menjadi simbol ketahanan serta keunikan alam gurun.
+            Kaktus adalah tanaman dari keluarga Cactaceae, dikenal dengan kemampuan bertahan hidup di daerah gurun yang kering.
+            Batangnya berdaging untuk menyimpan air dan duri menggantikan daun untuk mengurangi penguapan.
+            Tanaman ini pertama kali ditemukan di Amerika dan menjadi simbol ketahanan serta keunikan alam gurun.
         </p>
+        <h4 style="color:#2c6e49;">Ciri-ciri Kaktus:</h4>
+        <ul style="color:#3c763d;">
+            <li>Batang berdaging dan berair</li>
+            <li>Duri sebagai pengganti daun</li>
+            <li>Bunga indah dan beragam warna</li>
+        </ul>
+        <h4 style="color:#2c6e49;">Fun Facts:</h4>
+        <ul style="color:#3c763d;">
+            <li>Bunga kaktus bisa mekar hanya semalam</li>
+            <li>Beberapa kaktus bisa hidup lebih dari 100 tahun</li>
+            <li>Jenis kaktus populer: Astrophytum, Ferocactus, Gymnocalycium</li>
+        </ul>
     </div>
     """, unsafe_allow_html=True)
 
