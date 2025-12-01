@@ -171,9 +171,9 @@ if page == "Prediksi Kaktus":
     if uploaded:
         image = Image.open(uploaded)
 
-        # Box upload image berwarna
+        # Gambar diperkecil dan ditengah
         st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-        st.image(image, caption="Gambar yang diupload", use_column_width=300)
+        st.image(image, caption="Gambar yang diupload", width=300)
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.button("🔍 Prediksi"):
