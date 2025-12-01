@@ -172,8 +172,7 @@ if page == "Prediksi Kaktus":
         image = Image.open(uploaded)
 
         # Box upload image berwarna
-        st.markdown("<div style='background-color:#fcf8e3; padding:25px; border-radius:14px; \
-                     box-shadow:0px 4px 20px rgba(0,0,0,0.06); text-align:center;'>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
         st.image(image, caption="Gambar yang diupload", use_column_width=300)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -185,10 +184,8 @@ if page == "Prediksi Kaktus":
             pred_label = labels[idx]
             prob = float(probs[idx])
 
-            # Box hasil prediksi berwarna
-            st.markdown("<div style='background-color:#d9edf7; padding:15px; border-radius:10px; margin-top:15px;'>", unsafe_allow_html=True)
+            # Hasil prediksi tanpa box warna
             st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
-            st.markdown("</div>", unsafe_allow_html=True)
 
             # Bar chart probabilitas
             st.subheader("📊 Grafik Probabilitas")
