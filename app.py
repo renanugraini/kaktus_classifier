@@ -9,6 +9,7 @@ import tempfile
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
+import matplotlib.pyplot as plt
 
 # ====================================================
 # PAGE CONFIG & STYLE
@@ -72,6 +73,7 @@ def predict(interpreter, input_details, output_details, array):
     probs = np.squeeze(output)
     return probs
 
+
 # ====================================================
 # GENERATE PDF
 # ====================================================
@@ -82,17 +84,14 @@ def generate_pdf(image, pred_label, prob):
     c = canvas.Canvas(pdf_path, pagesize=A4)
     w, h = A4
 
-    # Title
     c.setFont("Helvetica-Bold", 20)
     c.drawCentredString(w/2, h - 80, "Hasil Prediksi Klasifikasi Kaktus")
 
-    # Insert image
     img_reader = ImageReader(image)
     img_w = 280
     img_h = 280
     c.drawImage(img_reader, (w - img_w) / 2, h - 380, img_w, img_h)
 
-    # Prediction text
     c.setFont("Helvetica", 14)
     c.drawString(80, h - 420, f"Prediksi : {pred_label}")
     c.drawString(80, h - 440, f"Akurasi : {prob:.4f}")
@@ -115,6 +114,7 @@ labels = load_class_labels()
 
 uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
 
+
 if uploaded:
     image = Image.open(uploaded)
 
@@ -122,32 +122,40 @@ if uploaded:
     st.image(image, caption="Gambar yang diupload", use_column_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Tombol prediksi
-    if st.button("🔍 Prediksi", use_container_width=True):
+    if st.button("🔍 Prediksi"):
+        arr = preprocess(image)
+        probs = predict(interpreter, input_details, output_details, arr)
 
-        progress = st.progress(0)
-        for i in range(100):
-            time.sleep(0.01)
-            progress.progress(i+1)
+        idx = int(np.argmax(probs))
+        pred_label = labels[idx]
+        prob = float(probs[idx])
 
-        label, probs = predict(enhanced)
+        st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
 
-        st.success(f"🌟 Jenis Kaktus: **{label}**")
-        
-        # Probabilities
-        st.write("### Probabilitas")
-        for i,p in enumerate(probs):
-            st.write(f"- **{labels[i]}** → `{p:.4f}`")
-# ============================================================
-#  BAR CHART PROBABILITY
-# ============================================================
+        # ====================================================
+        # BAR CHART PROBABILITY
+        # ====================================================
+        st.subheader("📊 Grafik Probabilitas")
         fig, ax = plt.subplots()
         ax.bar(labels, probs)
-        ax.set_title("Grafik Probabilitas")
+        ax.set_ylabel("Probabilitas")
+        ax.set_ylim(0, 1)
+        ax.set_title("Probabilitas per Kelas")
         st.pyplot(fig)
 
-        
-        # PDF GENERATION
+        # ====================================================
+        # TABEL PROBABILITY
+        # ====================================================
+        st.subheader("📋 Tabel Probabilitas")
+        prob_table = {
+            "Kelas": labels,
+            "Probabilitas": [float(p) for p in probs]
+        }
+        st.table(prob_table)
+
+        # ====================================================
+        # DOWNLOAD PDF
+        # ====================================================
         pdf_path = generate_pdf(image, pred_label, prob)
 
         with open(pdf_path, "rb") as f:
