@@ -113,6 +113,3 @@ if uploaded_file is not None:
                 st.error(f"Terjadi error saat prediksi: {e}")
 else:
     st.info("Silakan upload gambar untuk memulai prediksi.")
-
-st.markdown("---")
-st.markdown("Tips: Jika urutan label tidak sesuai, buat file `class_labels.json` di root repo berisi array nama kelas dalam urutan output model. Contoh: `[\"Astrophytum asteria\", \"Ferocactus\", \"Gymnocalycium\"]`.")
