@@ -72,7 +72,6 @@ def predict(interpreter, input_details, output_details, array):
     probs = np.squeeze(output)
     return probs
 
-
 # ====================================================
 # GENERATE PDF
 # ====================================================
@@ -123,16 +122,31 @@ if uploaded:
     st.image(image, caption="Gambar yang diupload", use_column_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    if st.button("🔍 Prediksi"):
-        arr = preprocess(image)
-        probs = predict(interpreter, input_details, output_details, arr)
+    # Tombol prediksi
+    if st.button("🔍 Prediksi", use_container_width=True):
 
-        idx = int(np.argmax(probs))
-        pred_label = labels[idx]
-        prob = float(probs[idx])
+        progress = st.progress(0)
+        for i in range(100):
+            time.sleep(0.01)
+            progress.progress(i+1)
 
-        st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
+        label, probs = predict(enhanced)
 
+        st.success(f"🌟 Jenis Kaktus: **{label}**")
+        
+        # Probabilities
+        st.write("### Probabilitas")
+        for i,p in enumerate(probs):
+            st.write(f"- **{labels[i]}** → `{p:.4f}`")
+# ============================================================
+#  BAR CHART PROBABILITY
+# ============================================================
+        fig, ax = plt.subplots()
+        ax.bar(labels, probs)
+        ax.set_title("Grafik Probabilitas")
+        st.pyplot(fig)
+
+        
         # PDF GENERATION
         pdf_path = generate_pdf(image, pred_label, prob)
 
