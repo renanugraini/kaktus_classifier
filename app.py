@@ -10,6 +10,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 import matplotlib.pyplot as plt
+import requests
 
 # ====================================================
 # PAGE CONFIG & STYLE
@@ -117,7 +118,7 @@ def generate_pdf(image, pred_label, probs, labels):
 
     # Bar chart
     buf = io.BytesIO()
-    fig, ax = plt.subplots(figsize=(14,5))
+    fig, ax = plt.subplots(figsize=(15,4))
     ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
     ax.set_ylim(0,1)
     ax.set_ylabel("Probabilitas")
@@ -127,7 +128,7 @@ def generate_pdf(image, pred_label, probs, labels):
     plt.close(fig)
     buf.seek(0)
     chart_reader = ImageReader(buf)
-    chart_w = 480
+    chart_w = 450
     chart_h = 300
     c.drawImage(chart_reader, (w - chart_w)/2, y_text - chart_h - 10, chart_w, chart_h)
 
@@ -139,6 +140,10 @@ def generate_pdf(image, pred_label, probs, labels):
 # HALAMAN 1: Fakta & Sejarah Kaktus
 # ====================================================
 if page == "Fakta & Sejarah Kaktus":
+    # Ilustrasi kaktus di atas
+    cactus_img_url = "https://i.ibb.co/2d5R1q1/cactus.png"  # contoh URL ilustrasi
+    st.image(cactus_img_url, width=150)
+
     st.markdown("""
     <div style="background-color:#fdf5e6; padding:25px; border-radius:15px; margin-bottom:20px; box-shadow:0px 4px 15px rgba(0,0,0,0.05);">
         <h2 style="color:#2c6e49; text-align:center;">📖 Fakta & Sejarah Kaktus</h2>
@@ -166,6 +171,10 @@ if page == "Fakta & Sejarah Kaktus":
 # HALAMAN 2: Prediksi Kaktus
 # ====================================================
 if page == "Prediksi Kaktus":
+    # Ilustrasi kecil kaktus di atas upload box
+    cactus_small_url = "https://i.ibb.co/2d5R1q1/cactus.png"
+    st.image(cactus_small_url, width=100)
+
     uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
     if uploaded:
         image = Image.open(uploaded)
