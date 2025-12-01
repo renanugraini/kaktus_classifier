@@ -3,17 +3,17 @@ import streamlit as st
 st.title("📘 Informasi Model")
 
 st.write("""
-Model ini dilatih menggunakan CNN dengan dataset 3 jenis kaktus:
+Model CNN ini dilatih menggunakan dataset 3 jenis kaktus:
 - **Astrophytum asteria**
 - **Ferocactus**
 - **Gymnocalycium**
 
-Dengan augmentasi:
+Augmentasi yang digunakan:
 - Rotasi
 - Flip horizontal & vertical
 - Zoom
 - Shift posisi
 
-Resolution input: **150x150**  
-Epoch: **50**
+**Resolusi input:** 150×150  
+**Epoch:** 50  
 """)
