@@ -11,7 +11,12 @@ if uploaded:
     img = Image.open(uploaded).resize((150,150))
     st.image(img, caption="Gambar yang diunggah", use_column_width=True)
 
-    model = tf.keras.models.load_model("model.h5")
+    # Load model hanya sekali
+    @st.cache_resource
+    def load_model():
+        return tf.keras.models.load_model("model.h5")
+
+    model = load_model()
 
     img_array = np.expand_dims(np.array(img)/255.0, axis=0)
     pred = model.predict(img_array)[0]
