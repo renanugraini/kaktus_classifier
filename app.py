@@ -35,27 +35,23 @@ body { background-color: #fafafa; }
 </style>
 """, unsafe_allow_html=True)
 
-
 # =========================
-# Header Animasi
+# Header
 # =========================
 st.markdown("<div class='main-title'>🌵 Klasifikasi Tanaman Kaktus</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtext'>Aplikasi Machine Learning berbasis Streamlit</div>", unsafe_allow_html=True)
 
-with st.spinner("Memuat konten halaman..."):
-    time.sleep(1.2)
+with st.spinner("Memuat halaman..."):
+    time.sleep(1)
 
 st.write("")
-st.write("")
-
-# =========================
-# Body
-# =========================
 st.markdown("<div class='box'>", unsafe_allow_html=True)
+
 st.write("Selamat datang! 🎉")
 st.write("""
-Gunakan menu di sebelah kiri untuk:
-- **Klasifikasi gambar kaktus**
-- **Melihat informasi model**
+Gunakan menu **di sidebar kiri** untuk membuka halaman:
+- 📸 **Klasifikasi Gambar Kaktus**
+- 📘 **Informasi Model**
 """)
+
 st.markdown("</div>", unsafe_allow_html=True)
