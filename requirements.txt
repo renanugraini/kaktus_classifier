@@ -2,5 +2,4 @@ streamlit
 tensorflow
 pillow
 numpy
-matplotlib
 reportlab
