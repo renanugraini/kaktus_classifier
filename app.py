@@ -10,7 +10,6 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 import matplotlib.pyplot as plt
-import requests
 
 # ====================================================
 # PAGE CONFIG & STYLE
@@ -97,7 +96,7 @@ def generate_pdf(image, pred_label, probs, labels):
     c.setFont("Helvetica-Bold", 20)
     c.drawCentredString(w/2, h - 80, "Hasil Prediksi Klasifikasi Kaktus")
 
-    # Image
+    # Uploaded image
     img_for_pdf = image.copy().convert("RGB")
     img_reader = ImageReader(img_for_pdf)
     img_w = 240
@@ -116,9 +115,9 @@ def generate_pdf(image, pred_label, probs, labels):
         c.drawCentredString(w/2, y_text, f"{labels[i]} : {p:.4f}")
         y_text -= 18
 
-    # Bar chart
+    # Bar chart (diperbesar)
     buf = io.BytesIO()
-    fig, ax = plt.subplots(figsize=(14,5))
+    fig, ax = plt.subplots(figsize=(15,4))
     ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
     ax.set_ylim(0,1)
     ax.set_ylabel("Probabilitas")
@@ -141,7 +140,8 @@ def generate_pdf(image, pred_label, probs, labels):
 # ====================================================
 if page == "Fakta & Sejarah Kaktus":
     st.markdown("""
-    <div style="background-color:#fdf5e6; padding:25px; border-radius:15px; margin-bottom:20px; box-shadow:0px 4px 15px rgba(0,0,0,0.05);">
+    <div style="background-color:#fdf5e6; padding:25px; border-radius:15px; 
+                margin-bottom:20px; box-shadow:0px 4px 15px rgba(0,0,0,0.05);">
         <h2 style="color:#2c6e49; text-align:center;">📖 Fakta & Sejarah Kaktus</h2>
         <p style="text-align:justify; color:#3c763d; font-size:15px;">
             Kaktus adalah tanaman dari keluarga Cactaceae, dikenal dengan kemampuan bertahan hidup di daerah gurun yang kering.
@@ -167,17 +167,15 @@ if page == "Fakta & Sejarah Kaktus":
 # HALAMAN 2: Prediksi Kaktus
 # ====================================================
 if page == "Prediksi Kaktus":
-    #box upload image
     uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
-    st.markdown("<div style='background-color:#fcf8e3; padding:25px; border-radius:14px; \
-             box-shadow:0px 4px 20px rgba(0,0,0,0.06); text-align:center;'>", unsafe_allow_html=True)
-    st.image(image, caption="Gambar yang diupload", use_column_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    if uploaded:
+        image = Image.open(uploaded)
 
-    #box hasil prediksi
-    st.markdown("<div style='background-color:#d9edf7; padding:15px; border-radius:10px; margin-top:15px;'>", unsafe_allow_html=True)
-    st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
-    st.markdown("</div>", unsafe_allow_html=True)
+        # Box upload image berwarna
+        st.markdown("<div style='background-color:#fcf8e3; padding:25px; border-radius:14px; \
+                     box-shadow:0px 4px 20px rgba(0,0,0,0.06); text-align:center;'>", unsafe_allow_html=True)
+        st.image(image, caption="Gambar yang diupload", use_column_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
         if st.button("🔍 Prediksi"):
             arr = preprocess(image)
@@ -187,18 +185,21 @@ if page == "Prediksi Kaktus":
             pred_label = labels[idx]
             prob = float(probs[idx])
 
+            # Box hasil prediksi berwarna
             st.markdown("<div style='background-color:#d9edf7; padding:15px; border-radius:10px; margin-top:15px;'>", unsafe_allow_html=True)
             st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
             st.markdown("</div>", unsafe_allow_html=True)
 
+            # Bar chart probabilitas
             st.subheader("📊 Grafik Probabilitas")
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(14,4))
             ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
             ax.set_ylabel("Probabilitas")
             ax.set_ylim(0, 1)
             ax.set_title("Probabilitas per Kelas")
             st.pyplot(fig)
 
+            # Tabel probabilitas
             st.subheader("📋 Tabel Probabilitas")
             prob_table = {
                 "Kelas": labels,
@@ -206,6 +207,7 @@ if page == "Prediksi Kaktus":
             }
             st.table(prob_table)
 
+            # Download PDF
             pdf_path = generate_pdf(image, pred_label, probs, labels)
             with open(pdf_path, "rb") as f:
                 st.download_button(
