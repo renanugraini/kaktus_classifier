@@ -140,10 +140,6 @@ def generate_pdf(image, pred_label, probs, labels):
 # HALAMAN 1: Fakta & Sejarah Kaktus
 # ====================================================
 if page == "Fakta & Sejarah Kaktus":
-    # Ilustrasi kaktus di atas
-    cactus_img_url = "https://i.ibb.co/2d5R1q1/cactus.png"  # contoh URL ilustrasi
-    st.image(cactus_img_url, width=150)
-
     st.markdown("""
     <div style="background-color:#fdf5e6; padding:25px; border-radius:15px; margin-bottom:20px; box-shadow:0px 4px 15px rgba(0,0,0,0.05);">
         <h2 style="color:#2c6e49; text-align:center;">📖 Fakta & Sejarah Kaktus</h2>
@@ -171,10 +167,6 @@ if page == "Fakta & Sejarah Kaktus":
 # HALAMAN 2: Prediksi Kaktus
 # ====================================================
 if page == "Prediksi Kaktus":
-    # Ilustrasi kecil kaktus di atas upload box
-    cactus_small_url = "https://i.ibb.co/2d5R1q1/cactus.png"
-    st.image(cactus_small_url, width=100)
-
     uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
     if uploaded:
         image = Image.open(uploaded)
