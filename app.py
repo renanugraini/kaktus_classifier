@@ -2,164 +2,217 @@ import streamlit as st
 import numpy as np
 import tensorflow as tf
 from PIL import Image
-import matplotlib.pyplot as plt
+import json
 import io
+import os
+import tempfile
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
+import matplotlib.pyplot as plt
 
-st.set_page_config(
-    page_title="Cactus Classifier",
-    page_icon="🌵",
-    layout="centered"
-)
+# ====================================================
+# PAGE CONFIG
+# ====================================================
+st.set_page_config(page_title="Klasifikasi Kaktus", page_icon="🌵", layout="centered")
 
-# ============================================================
-# STYLE
-# ============================================================
+# ====================================================
+# CUSTOM STYLE
+# ====================================================
 st.markdown("""
-    <style>
-        .main-title {
-            font-size: 36px;
-            font-weight: 800;
-            text-align: center;
-            color: #2ecc71;
-        }
-        .subtext {
-            font-size: 18px;
-            text-align: justify;
-        }
-        .section-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-top: 30px;
-            color: #27ae60;
-        }
-        .box {
-            background-color: #ecf9ec;
-            padding: 20px;
-            border-radius: 12px;
-        }
-    </style>
+<style>
+
+body {
+    background-color: #f7f7f7;
+}
+
+.centered-img {
+    display: flex;
+    justify-content: center;
+}
+
+.box {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.06);
+}
+
+.menu-box {
+    background: linear-gradient(135deg, #e8f8f5, #d1f2eb);
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
+}
+
+</style>
 """, unsafe_allow_html=True)
 
-# ============================================================
-# NAVIGASI TANPA SIDEBAR
-# ============================================================
-page = st.selectbox(
-    "Navigasi",
-    ["🏠 Informasi Kaktus", "📸 Prediksi Kaktus"]
-)
+# ====================================================
+# LOAD MODEL TFLITE
+# ====================================================
+@st.cache_resource
+def load_tflite_model(model_path="model_kaktus.tflite"):
+    interpreter = tf.lite.Interpreter(model_path=model_path)
+    interpreter.allocate_tensors()
+    return interpreter, interpreter.get_input_details(), interpreter.get_output_details()
 
-# ============================================================
-# ---------------- HALAMAN 1: INFORMASI KAKTUS ----------------
-# ============================================================
-if page == "🏠 Informasi Kaktus":
+# Load labels
+def load_class_labels(path="class_labels.json"):
+    if os.path.exists(path):
+        return json.load(open(path, "r"))
+    return ["Astrophytum asteria", "Ferocactus", "Gymnocalycium"]
 
-    st.markdown("<div class='main-title'>🌵 Tentang Kaktus</div>", unsafe_allow_html=True)
+# ====================================================
+# PREPROCESS
+# ====================================================
+def preprocess(img):
+    img = img.convert("RGB")
+    img = img.resize((150,150))
+    arr = np.array(img).astype("float32") / 255.0
+    return np.expand_dims(arr, axis=0)
+
+# ====================================================
+# PREDICT
+# ====================================================
+def predict(interpreter, input_details, output_details, array):
+    interpreter.set_tensor(input_details[0]["index"], array)
+    interpreter.invoke()
+    output = interpreter.get_tensor(output_details[0]["index"])
+    return np.squeeze(output)
+
+# ====================================================
+# GENERATE PDF
+# ====================================================
+def generate_pdf(image, pred_label, probs, labels):
+    temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    pdf_path = temp.name
+
+    c = canvas.Canvas(pdf_path, pagesize=A4)
+    w, h = A4
+
+    # Title
+    c.setFont("Helvetica-Bold", 20)
+    c.drawCentredString(w/2, h - 80, "Hasil Prediksi Klasifikasi Kaktus")
+
+    # Uploaded image (small & centered)
+    img_for_pdf = image.copy().convert("RGB")
+    img_reader = ImageReader(img_for_pdf)
+    img_w = 200
+    img_h = 200
+    c.drawImage(img_reader, (w - img_w)/2, h - 120 - img_h, img_w, img_h)
+
+    # Prediction text
+    c.setFont("Helvetica-Bold", 14)
+    y_text = h - 120 - img_h - 25
+    c.drawCentredString(w/2, y_text, f"Prediksi : {pred_label}")
+
+    # Probability table
+    c.setFont("Helvetica", 12)
+    y_text -= 25
+    for i, p in enumerate(probs):
+        c.drawCentredString(w/2, y_text, f"{labels[i]} : {p:.4f}")
+        y_text -= 18
+
+    # Bar chart
+    buf = io.BytesIO()
+    fig, ax = plt.subplots(figsize=(14,4))
+    ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
+    ax.set_ylim(0,1)
+    ax.set_ylabel("Probabilitas")
+    ax.set_title("Probabilitas per Kelas")
+    plt.tight_layout()
+    fig.savefig(buf, format='png', dpi=150)
+    plt.close(fig)
+    buf.seek(0)
+
+    chart_reader = ImageReader(buf)
+    chart_w = 480
+    chart_h = 300
+    c.drawImage(chart_reader, (w - chart_w)/2, y_text - chart_h - 10, chart_w, chart_h)
+
+    c.save()
+    buf.close()
+    return pdf_path
+
+
+# ====================================================
+# MENU (2 Halaman Tanpa Sidebar)
+# ====================================================
+menu = st.selectbox("Menu", ["🏠 Tentang Kaktus", "🌵 Prediksi Kaktus"])
+
+labels = load_class_labels()
+
+with st.spinner("Memuat model..."):
+    interpreter, input_details, output_details = load_tflite_model("model_kaktus.tflite")
+
+# ====================================================
+# HALAMAN 1 — Tentang Kaktus
+# ====================================================
+if menu == "🏠 Tentang Kaktus":
+
+    st.markdown("<div class='menu-box'>", unsafe_allow_html=True)
+    st.title("🌵 Tentang Tanaman Kaktus")
     st.write("")
 
-    st.markdown("<div class='box'>", unsafe_allow_html=True)
+    st.write("""
+    Kaktus adalah tanaman sukulen yang berasal dari daerah gurun dan dikenal mampu 
+    menyimpan air di batangnya. Tanaman ini memiliki bentuk unik, pertahanan berupa 
+    duri, dan mampu bertahan hidup di kondisi ekstrim.
+    """)
 
-    st.markdown("""
-        <div class='section-title'>📌 Sejarah Singkat Kaktus</div>
-        <p class='subtext'>
-        Kaktus merupakan tanaman sukulen yang berasal dari benua Amerika dan telah beradaptasi 
-        untuk hidup di lingkungan kering seperti gurun. Struktur tubuhnya mengandung cadangan air 
-        yang besar dan dilindungi oleh duri, yang pada dasarnya adalah daun yang mengalami modifikasi.
-        </p>
-
-        <div class='section-title'>📌 Fakta Menarik Kaktus</div>
-        <ul class='subtext'>
-            <li>Kaktus memiliki lebih dari <b>2.000 spesies</b> di seluruh dunia.</li>
-            <li>Duri kaktus berfungsi melindungi sekaligus mengurangi penguapan.</li>
-            <li>Beberapa kaktus bisa hidup lebih dari <b>200 tahun</b>.</li>
-            <li>Kaktus menghasilkan oksigen lebih banyak pada malam hari.</li>
-        </ul>
-    """, unsafe_allow_html=True)
+    st.subheader("✨ Fakta Menarik tentang Kaktus")
+    st.write("""
+    - Kaktus dapat menyimpan air hingga **200 liter** di batangnya.
+    - Duri pada kaktus berfungsi melindungi dari hewan dan mengurangi penguapan.
+    - Kaktus termasuk tanaman yang berfotosintesis menggunakan metode **CAM**, 
+      yang membuatnya efisien bertahan di cuaca panas.
+    - Beberapa kaktus dapat hidup hingga **200 tahun**.
+    """)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.write("")
-    st.info("Klik navigasi di atas untuk menuju halaman prediksi.")
 
 
-# ============================================================
-# ---------------- HALAMAN 2: PREDIKSI ------------------------
-# ============================================================
-else:
-    st.markdown("<div class='main-title'>📸 Prediksi Jenis Kaktus</div>", unsafe_allow_html=True)
-    st.write("")
+# ====================================================
+# HALAMAN 2 — Prediksi Kaktus
+# ====================================================
+elif menu == "🌵 Prediksi Kaktus":
 
-    uploaded = st.file_uploader("Upload gambar kaktus", type=["jpg", "jpeg", "png"])
+    st.title("🌵 Prediksi Jenis Kaktus")
+    uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
 
     if uploaded:
-        img = Image.open(uploaded)
-        img = img.convert("RGB")
+        image = Image.open(uploaded)
 
-        st.image(img, caption="Gambar yang diupload", width=300)
+        st.markdown("<div class='centered-img'>", unsafe_allow_html=True)
+        st.image(image, width=300)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        # ---------------------------------------------------------
-        # MODEL PREDIKSI
-        # ---------------------------------------------------------
-        img_resized = img.resize((224, 224))
-        img_array = np.array(img_resized) / 255.0
-        img_batch = np.expand_dims(img_array, axis=0)
+        if st.button("🔍 Prediksi"):
+            arr = preprocess(image)
+            probs = predict(interpreter, input_details, output_details, arr)
+            idx = int(np.argmax(probs))
+            pred_label = labels[idx]
 
-        model = tf.keras.models.load_model("model.h5")
-        preds = model.predict(img_batch)[0]
+            st.success(f"**Prediksi: {pred_label}**")
 
-        labels = ["Cactus Type A", "Cactus Type B", "Cactus Type C"]
-        best_idx = np.argmax(preds)
-        best_label = labels[best_idx]
-        best_prob = preds[best_idx]
+            # Grafik
+            fig, ax = plt.subplots()
+            ax.bar(labels, probs)
+            ax.set_ylim(0,1)
+            ax.set_ylabel("Probabilitas")
+            st.pyplot(fig)
 
-        st.success(f"**Prediksi: {best_label} ({best_prob*100:.2f}%)**")
+            # Download PDF
+            pdf_path = generate_pdf(image, pred_label, probs, labels)
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    "📄 Download PDF",
+                    data=f,
+                    file_name="hasil_prediksi_kaktus.pdf",
+                    mime="application/pdf"
+                )
 
-        # ---------------------------------------------------------
-        # GRAFIK BAR
-        # ---------------------------------------------------------
-        fig, ax = plt.subplots(figsize=(7, 4))
-        ax.bar(labels, preds)
-        ax.set_ylim(0, 1)
-        ax.set_ylabel("Probabilitas")
-        ax.set_title("Probabilitas per Kelas")
-        st.pyplot(fig)
-
-        # ---------------------------------------------------------
-        # DOWNLOAD PDF
-        # ---------------------------------------------------------
-        buf = io.BytesIO()
-        pdf = canvas.Canvas(buf, pagesize=A4)
-
-        text = f"""
-        Hasil Prediksi
-        ----------------------
-        Prediksi : {best_label}
-        Probabilitas : {best_prob*100:.2f}%
-        """
-
-        pdf.drawString(50, 780, "Hasil Prediksi Cactus Classifier")
-
-        y = 740
-        for line in text.splitlines():
-            pdf.drawString(50, y, line)
-            y -= 20
-
-        # Masukkan grafik ke PDF
-        chart_buf = io.BytesIO()
-        fig.savefig(chart_buf, format='png')
-        chart_buf.seek(0)
-
-        chart_img = ImageReader(chart_buf)
-        pdf.drawImage(chart_img, 50, 420, width=350, height=250)
-
-        pdf.save()
-        buf.seek(0)
-
-        st.download_button(
-            "Download Hasil PDF",
-            data=buf,
-            file_name="hasil_prediksi_kaktus.pdf",
-            mime="application/pdf"
-        )
+    else:
+        st.info("Silakan upload gambar untuk memulai prediksi.")
