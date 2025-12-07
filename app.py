@@ -130,7 +130,7 @@ ul li {
     border: 1px solid #000000 !important;
 }
 .stDownloadButton > button:hover {
-    background-color: #000000 !important;
+    background-color: #fffffff !important;
 }
 
 
