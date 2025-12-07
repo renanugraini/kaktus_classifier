@@ -22,13 +22,12 @@ st.set_page_config(
 page_bg = """
 <style>
 
+/* ===== Aesthetic Patterned Gradient ===== */
 [data-testid="stAppViewContainer"] {
-    background: 
-        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-        url("https://id.pinterest.com/pin/265993921737360783/");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background: linear-gradient(135deg, #166534 0%, #22c55e 100%),
+                url("https://www.transparenttextures.com/patterns/cubes.png");
+    background-size: cover, 300px;
+    opacity: 1;
 }
 
 
