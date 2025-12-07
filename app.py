@@ -133,21 +133,20 @@ if menu == "Informasi Kaktus":
         </p>
 
         <h3>Fakta Menarik Kaktus:</h3>
-        <ul>
-            <li>Kaktus dapat hidup hingga ratusan tahun.</li>
-            <li>Beberapa kaktus dapat tumbuh lebih dari 20 meter.</li>
-            <li>Terdapat lebih dari 2.000 spesies kaktus di dunia.</li>
-            <li>Bentuknya sangat beragam: bulat, pipih, memanjang, hingga bercabang.</li>
-        </ul>
+<ul>
+    <li>Kaktus dapat hidup hingga ratusan tahun.</li>
+    <li>Beberapa kaktus dapat tumbuh lebih dari 20 meter.</li>
+    <li>Terdapat lebih dari 2.000 spesies kaktus di dunia.</li>
+    <li>Bentuknya sangat beragam: bulat, pipih, memanjang, hingga bercabang.</li>
+</ul>
 
-        <h3>Jenis Kaktus Yang Sering Dijumpai:</h3>
-        <ul>
-            <li><b>Cereus</b> – bentuk panjang menjulang seperti tiang.</li>
-            <li><b>Epiphyllum</b> – memiliki daun pipih & bunga besar.</li>
-            <li><b>Opuntia</b> – dikenal sebagai “prickly pear”, bentuk oval pipih.</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
+<h3>Jenis Kaktus Yang Sering Dijumpai:</h3>
+<ul>
+    <li><b>Cereus</b> – bentuk panjang menjulang seperti tiang.</li>
+    <li><b>Epiphyllum</b> – memiliki daun pipih & bunga besar.</li>
+    <li><b>Opuntia</b> – dikenal sebagai “prickly pear”, bentuk oval pipih.</li>
+</ul>
+""", unsafe_allow_html=True)
 
 # =========================================================
 # PAGE 2: PREDIKSI KAKTUS
