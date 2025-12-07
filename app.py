@@ -123,7 +123,7 @@ ul li {
 
 /* ===== Styling Button Download PDF ===== */
 .stDownloadButton > button {
-    background-color: #000000 !important;
+    background-color: #ffffff !important;
     color: white !important;
     font-weight: bold;
     border-radius: 10px;
@@ -153,7 +153,7 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
 # label kelas
-labels = ["Cereus", "Epiphyllum", "Opuntia"]
+labels = ["Astrophytum Asteria", "Ferocactus", "Gymnocalycium"]
 
 # =========================================================
 # FUNCTION PREDIKSI
