@@ -159,8 +159,7 @@ if menu == "Informasi Kaktus":
         Mereka menyimpan air di batangnya, memiliki duri sebagai bentuk adaptasi, dan termasuk dalam 
         keluarga <i>Cactaceae</i>.
         </p>
-
-        <h3>Fakta Menarik Kaktus:</h3>
+        
 <ul>
     <li>Kaktus dapat hidup hingga ratusan tahun.</li>
     <li>Beberapa kaktus dapat tumbuh lebih dari 20 meter.</li>
