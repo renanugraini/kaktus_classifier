@@ -78,6 +78,17 @@ h1, h2, h3, p, label, span {
     color: #ecf0f1 !important;
 }
 
+/* TEKS AGAR TERLIHAT */
+h1, h2, h3, h4, h5, h6,
+p, span, label, li, strong, b {
+    color: #ffffff !important;
+}
+
+/* Label upload gambar */
+.stFileUploader label {
+    color: #ffffff !important;
+}
+
 </style>
 """
 st.markdown(page_bg, unsafe_allow_html=True)
