@@ -22,10 +22,24 @@ st.set_page_config(
 page_bg = """
 <style>
 
-/* ===== Soft Green Background ===== */
+/* ===== Premium Green Gradient Background ===== */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #1c8f4a 0%, #33a165 50%, #4fb67d 100%);
-    background-attachment: fixed;
+    background: linear-gradient(
+        135deg,
+        #0f5132 0%,
+        #198754 35%,
+        #25a66a 70%,
+        #3ecf8e 100%
+    ) !important;
+    background-size: 200% 200%;
+    animation: gradientMove 12s ease infinite;
+}
+
+/* Animasi halus (biar keliatan mahal) */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* ===== SIDEBAR ===== */
