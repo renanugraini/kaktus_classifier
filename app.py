@@ -22,13 +22,26 @@ st.set_page_config(
 page_bg = """
 <style>
 
-/* ===== Aesthetic Patterned Gradient ===== */
+/* ===== Premium Green Gradient Background ===== */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #166534 0%, #22c55e 100%),
-                url("https://www.transparenttextures.com/patterns/cubes.png");
-    background-size: cover, 300px;
-    opacity: 1;
+    background: linear-gradient(
+        135deg,
+        #0f5132 0%,
+        #198754 35%,
+        #25a66a 70%,
+        #3ecf8e 100%
+    ) !important;
+    background-size: 200% 200%;
+    animation: gradientMove 12s ease infinite;
 }
+
+/* Animasi halus (biar keliatan mahal) */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 
 
 /* ===== SIDEBAR ===== */
