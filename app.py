@@ -82,14 +82,16 @@ ul li {
     font-size: 16px;
 }
 
+/* ===== SET TULISAN UPLOADER HITAM BIAR PASTI TERLIHAT ===== */
 [data-testid="stFileUploader"] * {
-    color: #ffffff !important;
-    fill: #ffffff !important;
-    stroke: #ffffff !important;
+    color: #000000 !important;
+    fill: #000000 !important;
+    stroke: #000000 !important;
 }
 
+/* ===== SET H3 MENJADI HITAM JUGA ===== */
 h3 {
-    color: #ffffff !important;
+    color: #000000 !important;
     font-weight: 700 !important;
 }
 
