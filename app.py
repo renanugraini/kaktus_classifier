@@ -1,291 +1,178 @@
 import streamlit as st
-import numpy as np
 import tensorflow as tf
+import numpy as np
 from PIL import Image
-import json
 import io
-import os
-import tempfile
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.utils import ImageReader
+import base64
 import matplotlib.pyplot as plt
 
-
-# ====================================================
+# =========================================================
 # PAGE CONFIG
-# ====================================================
+# =========================================================
 st.set_page_config(
-    page_title="Klasifikasi Kaktus",
+    page_title="Kaktus Classifier",
     page_icon="🌵",
     layout="centered"
 )
 
+# =========================================================
+# CUSTOM THEME (GREEN CACTUS + DARK OVERLAY)
+# =========================================================
 
-# ====================================================
-# THEME CSS — GREEN CACTUS + AUTO DARK MODE
-# ====================================================
-st.markdown("""
+page_bg = """
 <style>
-
-:root {
-    --cactus-green: #27ae60;
-    --cactus-green-dark: #1e874b;
-    --soft-green: #e9f7ef;
-    --dark-bg: #1c1c1c;
-    --dark-card: #242424;
-    --text-dark: #e6e6e6;
-    --text-light: #333;
+/* Background image */
+[data-testid="stAppViewContainer"] {
+    background-image: url('https://i.ibb.co/s23bD7r/cactus-bg-green.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-/* Light mode */
-body, .stApp {
-    background-color: var(--soft-green);
-    color: var(--text-light);
-    font-family: 'Segoe UI', sans-serif;
+/* Dark overlay */
+[data-testid="stAppViewContainer"]::before {
+    content: "";
+    position: absolute;
+    top:0; left:0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.45);
+    z-index: 0;
 }
 
-/* Content box */
-.box {
-    padding: 25px;
-    border-radius: 14px;
-    background: white;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.07);
-    transition: 0.3s ease;
+/* Bring content to front */
+.block-container {
+    position: relative;
+    z-index: 1;
 }
 
-/* Hover */
-.box:hover {
-    box-shadow: 0px 6px 25px rgba(0,0,0,0.12);
+/* Card style */
+.stCard {
+    background: rgba(0,0,0,0.35);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(6px);
 }
 
-/* Titles */
-h1, h2, h3 {
-    color: var(--cactus-green-dark);
-    font-weight: bold;
+/* Text color */
+h1, h2, h3, p, label, span {
+    color: #ecf0f1 !important;
 }
 
-/* Dark Mode Auto */
-@media (prefers-color-scheme: dark) {
-    body, .stApp {
-        background-color: var(--dark-bg) !important;
-        color: var(--text-dark) !important;
-    }
-
-    .box {
-        background: var(--dark-card) !important;
-        color: var(--text-dark) !important;
-    }
-
-    h1, h2, h3 {
-        color: var(--cactus-green) !important;
-    }
-}
-
-/* Button */
-.stButton>button {
-    background: var(--cactus-green) !important;
+/* Buttons */
+.st-emotion-cache-7ym5gk, .st-emotion-cache-7ym5gk:hover {
+    background-color: #27ae60 !important;
     color: white !important;
-    border-radius: 10px !important;
-    padding: 10px 18px !important;
-    font-size: 16px !important;
-    border: none !important;
-}
-.stButton>button:hover {
-    background: var(--cactus-green-dark) !important;
 }
 
+/* Selectbox */
+.stSelectbox, .st-emotion-cache-1gulkj5 {
+    color: white !important;
+}
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
 
-
-# ====================================================
+# =========================================================
 # LOAD TFLITE MODEL
-# ====================================================
+# =========================================================
 @st.cache_resource
-def load_tflite_model(model_path="model_kaktus.tflite"):
-    interpreter = tf.lite.Interpreter(model_path=model_path)
+def load_tflite():
+    interpreter = tf.lite.Interpreter(model_path="model_kaktus.tflite")
     interpreter.allocate_tensors()
-    return (
-        interpreter,
-        interpreter.get_input_details(),
-        interpreter.get_output_details()
-    )
+    return interpreter
 
+interpreter = load_tflite()
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
-# ====================================================
-# LOAD CLASS LABELS
-# ====================================================
-def load_class_labels(path="class_labels.json"):
-    if os.path.exists(path):
-        return json.load(open(path))
-    return ["Astrophytum asteria", "Ferocactus", "Gymnocalycium"]
+# label kelas
+labels = ["Cereus", "Epiphyllum", "Opuntia"]
 
+# =========================================================
+# FUNCTION PREDIKSI
+# =========================================================
+def predict(img):
+    image = img.resize((150,150))
+    arr = np.array(image)/255.0
+    arr = np.expand_dims(arr, axis=0).astype("float32")
 
-# ====================================================
-# PREPROCESS & PREDICT
-# ====================================================
-def preprocess(img):
-    img = img.convert("RGB")
-    img = img.resize((150,150))
-    arr = np.array(img).astype("float32") / 255.0
-    return np.expand_dims(arr, axis=0)
-
-
-def predict(interpreter, input_details, output_details, array):
-    interpreter.set_tensor(input_details[0]["index"], array)
+    interpreter.set_tensor(input_details[0]["index"], arr)
     interpreter.invoke()
-    output = interpreter.get_tensor(output_details[0]["index"])
-    probs = np.squeeze(output)
-    return probs
+    preds = interpreter.get_tensor(output_details[0]["index"])[0]
+    return preds
 
+# =========================================================
+# HALAMAN MENU
+# =========================================================
 
-# ====================================================
-# GENERATE PDF
-# ====================================================
-def generate_pdf(image, pred_label, probs, labels):
+menu = st.sidebar.radio("Navigasi", ["Informasi Kaktus", "Prediksi Kaktus"])
 
-    temp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-    pdf_path = temp.name
-
-    c = canvas.Canvas(pdf_path, pagesize=A4)
-    w, h = A4
-
-    c.setFont("Helvetica-Bold", 20)
-    c.drawCentredString(w/2, h - 60, "Hasil Prediksi Klasifikasi Kaktus")
-
-    # Uploaded image (center & small)
-    img_for_pdf = image.copy().convert("RGB")
-    img_reader = ImageReader(img_for_pdf)
-    img_w = 200
-    img_h = 200
-    c.drawImage(img_reader, (w-img_w)/2, h - 100 - img_h, img_w, img_h)
-
-    # Prediction text
-    y = h - 100 - img_h - 30
-    c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(w/2, y, f"Prediksi : {pred_label}")
-    y -= 30
-
-    # Probabilities text
-    c.setFont("Helvetica", 12)
-    for i, p in enumerate(probs):
-        c.drawCentredString(w/2, y, f"{labels[i]} : {p:.4f}")
-        y -= 18
-
-    # Bar chart image
-    buf = io.BytesIO()
-    fig, ax = plt.subplots(figsize=(5,3))
-    ax.bar(labels, probs, color=['#2ecc71','#f39c12','#3498db'])
-    ax.set_ylim(0,1)
-    ax.set_ylabel("Probabilitas")
-    ax.set_title("Probabilitas per Kelas")
-    plt.tight_layout()
-    fig.savefig(buf, format='png', dpi=150)
-    plt.close(fig)
-    buf.seek(0)
-
-    chart_reader = ImageReader(buf)
-    chart_w = 350
-    chart_h = 220
-    c.drawImage(chart_reader, (w-chart_w)/2, y - chart_h - 10, chart_w, chart_h)
-
-    c.save()
-    buf.close()
-    return pdf_path
-
-
-# ====================================================
-# MENU UTAMA (NO SIDEBAR)
-# ====================================================
-menu = st.selectbox("Menu:", ["🏠 Tentang Kaktus", "🌵 Prediksi Kaktus"])
-
-labels = load_class_labels()
-
-
-# ====================================================
-# PAGE 1 — ABOUT CACTUS
-# ====================================================
-if menu == "🏠 Tentang Kaktus":
-
-    st.markdown("<h1 style='text-align:center;'>🌵 Tentang Tanaman Kaktus</h1>", unsafe_allow_html=True)
+# =========================================================
+# PAGE 1: INFORMASI KAKTUS
+# =========================================================
+if menu == "Informasi Kaktus":
+    st.markdown("<h1 class='stCard'>🌵 Informasi Tentang Kaktus</h1>", unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="box">
-        <h3>🌱 Sejarah Singkat</h3>
+    <div class='stCard'>
+        <h3>Apa itu Kaktus?</h3>
         <p>
-            Kaktus berasal dari benua Amerika dan banyak ditemukan di wilayah gurun 
-            seperti Meksiko, Arizona, dan Peru. Tanaman ini mampu menyimpan air 
-            dalam jumlah besar sehingga dapat bertahan di kondisi lingkungan yang kering.
+        Kaktus merupakan tanaman sukulen yang mampu bertahan hidup di lingkungan ekstrem seperti gurun.
+        Mereka menyimpan air di batangnya, memiliki duri sebagai bentuk adaptasi, dan termasuk dalam 
+        keluarga <i>Cactaceae</i>.
         </p>
 
-        <h3>✨ Fakta Menarik</h3>
+        <h3>Fakta Menarik Kaktus:</h3>
         <ul>
-            <li>Kaktus memiliki stomata yang hanya membuka malam hari untuk mengurangi penguapan.</li>
-            <li>Banyak kaktus dapat hidup lebih dari 100 tahun.</li>
-            <li>Bentuknya beragam: bulat, silinder, hingga bercabang.</li>
-            <li>Duri kaktus adalah modifikasi daun untuk melindungi diri.</li>
+            <li>Kaktus dapat hidup hingga ratusan tahun.</li>
+            <li>Beberapa kaktus dapat tumbuh lebih dari 20 meter.</li>
+            <li>Terdapat lebih dari 2.000 spesies kaktus di dunia.</li>
+            <li>Bentuknya sangat beragam: bulat, pipih, memanjang, hingga bercabang.</li>
         </ul>
 
-        <p style="margin-top:15px;">
-            Aplikasi ini dibuat untuk membantu mengidentifikasi jenis kaktus 
-            menggunakan model Convolutional Neural Network (CNN) yang ringan dan cepat.
-        </p>
+        <h3>Jenis Kaktus Yang Sering Dijumpai:</h3>
+        <ul>
+            <li><b>Cereus</b> – bentuk panjang menjulang seperti tiang.</li>
+            <li><b>Epiphyllum</b> – memiliki daun pipih & bunga besar.</li>
+            <li><b>Opuntia</b> – dikenal sebagai “prickly pear”, bentuk oval pipih.</li>
+        </ul>
     </div>
     """, unsafe_allow_html=True)
 
+# =========================================================
+# PAGE 2: PREDIKSI KAKTUS
+# =========================================================
+elif menu == "Prediksi Kaktus":
+    st.markdown("<h1 class='stCard'>🔍 Prediksi Jenis Kaktus</h1>", unsafe_allow_html=True)
+    st.write("Upload gambar kaktus untuk diklasifikasikan menggunakan model CNN.")
 
-# ====================================================
-# PAGE 2 — PREDIKSI
-# ====================================================
-elif menu == "🌵 Prediksi Kaktus":
-
-    st.markdown("<h1 style='text-align:center;'>🌵 Prediksi Jenis Kaktus</h1>", unsafe_allow_html=True)
-
-    with st.spinner("Memuat model..."):
-        interpreter, input_details, output_details = load_tflite_model()
-
-    uploaded = st.file_uploader("Upload gambar kaktus (jpg/png)", type=["jpg","png","jpeg"])
+    uploaded = st.file_uploader("Upload Gambar", type=["jpg","png","jpeg"])
 
     if uploaded:
-        image = Image.open(uploaded)
+        img = Image.open(uploaded).convert("RGB")
 
-        st.markdown("<div class='box' style='text-align:center;'>", unsafe_allow_html=True)
-        st.image(image, caption="Gambar yang diupload", width=300)
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;'>Gambar yang diupload</h3>", unsafe_allow_html=True)
+        st.image(img, width=280, caption="Preview", use_container_width=False)
 
-        if st.button("🔍 Prediksi"):
-            arr = preprocess(image)
-            probs = predict(interpreter, input_details, output_details, arr)
+        preds = predict(img)
+        probs = preds / np.sum(preds)
+        kelas = labels[np.argmax(probs)]
 
-            idx = int(np.argmax(probs))
-            pred_label = labels[idx]
-            prob = float(probs[idx])
+        st.markdown(
+            f"""
+            <div class='stCard'>
+                <h2>Hasil Prediksi</h2>
+                <p><b>Jenis Kaktus:</b> {kelas}</p>
+                <p><b>Probabilitas:</b></p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-            st.success(f"**Prediksi: {pred_label}** ({prob:.4f})")
+        # ===== BAR CHART =====
+        fig, ax = plt.subplots(figsize=(6,4))
+        ax.bar(labels, probs)
+        ax.set_ylim(0,1)
+        ax.set_ylabel("Probabilitas")
+        ax.set_title("Probabilitas per Kelas")
+        st.pyplot(fig)
 
-            # Barchart
-            st.subheader("📊 Grafik Probabilitas")
-            fig, ax = plt.subplots()
-            ax.bar(labels, probs)
-            ax.set_ylabel("Probabilitas")
-            ax.set_ylim(0, 1)
-            st.pyplot(fig)
-
-            # Table
-            st.subheader("📋 Tabel Probabilitas")
-            st.table({"Kelas": labels, "Probabilitas": [float(p) for p in probs]})
-
-            # PDF
-            pdf_path = generate_pdf(image, pred_label, probs, labels)
-
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    "📄 Download PDF Prediksi",
-                    data=f,
-                    file_name="hasil_prediksi_kaktus.pdf",
-                    mime="application/pdf"
-                )
-
-    else:
-        st.info("Silakan upload gambar untuk memulai prediksi.")
