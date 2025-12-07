@@ -111,7 +111,7 @@ ul li {
 
 /* Styling icon upload */
 [data-testid="stFileUploaderDropzone"] svg {
-    stroke: #ffffff !important;
+    stroke: #000000 !important;
     background: transparent !important;
     width: 40px !important;
     height: 40px !important;
