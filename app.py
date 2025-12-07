@@ -21,29 +21,67 @@ st.set_page_config(
 
 page_bg = """
 <style>
-/* LATAR BELAKANG WARNA HIJAU */
+page_bg = """
+<style>
+
+/* ===== Soft Green Background ===== */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #0b6121 0%, #0d7a2a 40%, #0f8f33 100%);
+    background: linear-gradient(135deg, #1c8f4a 0%, #33a165 50%, #4fb67d 100%);
+    background-attachment: fixed;
 }
 
-/* Agar teks tetap terlihat */
-h1, h2, h3, h4, h5, h6,
-p, span, label, li, strong, b {
-    color: #ffffff !important;
-}
-
-/* Label upload gambar */
-.stFileUploader label {
-    color: #ffffff !important;
-}
-
-/* Kotak putih tempat gambar tetap elegan */
-.box {
-    background: rgba(255,255,255,0.15) !important;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+/* ===== SIDEBAR ===== */
+[data-testid="stSidebar"] {
+    background: rgba(0,0,0,0.25) !important;
     backdrop-filter: blur(4px);
+}
+[data-testid="stSidebar"] * {
+    color: #ffffff !important;
+}
+
+/* ===== ALL TEXT COLOR (biar terlihat) ===== */
+h1, h2, h3, h4, h5, h6,
+p, span, label, li, strong, b, div, textarea {
+    color: #ffffff !important;
+}
+
+/* ===== FILE UPLOADER LABEL ===== */
+.stFileUploader > label {
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+/* ===== Kotak “Card” (semi transparan) ===== */
+.stCard {
+    background: rgba(255,255,255,0.18) !important;
+    padding: 20px;
+    border-radius: 14px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.25);
+}
+
+/* ===== Input teks dan selectbox ===== */
+.stTextInput > div > div > input,
+.stSelectbox > div > div {
+    color: #ffffff !important;
+}
+
+/* ===== Buttons ===== */
+.stButton>button {
+    background-color: #2ecc71 !important;
+    color: white !important;
+    border-radius: 10px;
+    font-weight: bold;
+    border: 1px solid #27ae60;
+}
+.stButton>button:hover {
+    background-color: #27ae60 !important;
+}
+
+/* ===== Buat ul / li terlihat ===== */
+ul li {
+    color: #ffffff !important;
+    font-size: 16px;
 }
 
 </style>
