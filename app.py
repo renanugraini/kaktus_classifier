@@ -104,6 +104,17 @@ ul li {
     color: #ffffff !important;
 }
 
+/* ===== PERBAIKI TEKS PLACEHOLDER DRAG & DROP ===== */
+[data-testid="stFileUploader"] .uploadedFileContent,
+[data-testid="stFileUploader"] .uploadFileName,
+[data-testid="stFileUploader"] .fileUploadDropzone,
+[data-testid="stFileUploader"] .uploadDropzoneText,
+[data-testid="stFileUploader"] span {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
 
 </style>
 
