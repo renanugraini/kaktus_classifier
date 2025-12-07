@@ -82,18 +82,28 @@ ul li {
     font-size: 16px;
 }
 
-/* ===== SET TULISAN UPLOADER HITAM BIAR PASTI TERLIHAT ===== */
-[data-testid="stFileUploader"] * {
-    color: #000000 !important;
-    fill: #000000 !important;
-    stroke: #000000 !important;
+/* ===== FORCE VISIBILITY UNTUK FILE UPLOADER ===== */
+[data-testid="stFileUploader"] {
+    background: rgba(0,0,0,0.25) !important;
+    padding: 15px !important;
+    border-radius: 12px !important;
 }
 
-/* ===== SET H3 MENJADI HITAM JUGA ===== */
-h3 {
-    color: #000000 !important;
-    font-weight: 700 !important;
+[data-testid="stFileUploader"] * {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
 }
+
+/* ===== BACKGROUND GELAP UNTUK H3 YANG DI DALAM CARD ===== */
+.stCard h3 {
+    background: rgba(0,0,0,0.20) !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    display: inline-block;
+    color: #ffffff !important;
+}
+
 
 </style>
 
