@@ -67,6 +67,17 @@ h1, h2, h3, p, label, span {
 .stSelectbox, .st-emotion-cache-1gulkj5 {
     color: white !important;
 }
+
+/* Fix sidebar agar tidak ikut gelap */
+[data-testid="stSidebar"] {
+    background: rgba(0,0,0,0.25) !important;
+    backdrop-filter: blur(4px);
+}
+
+[data-testid="stSidebar"] * {
+    color: #ecf0f1 !important;
+}
+
 </style>
 """
 st.markdown(page_bg, unsafe_allow_html=True)
