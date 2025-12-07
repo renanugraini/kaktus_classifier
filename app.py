@@ -23,7 +23,6 @@ page_bg = """
 <style>
 page_bg = """
 <style>
-
 /* ===== Soft Green Background ===== */
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(135deg, #1c8f4a 0%, #33a165 50%, #4fb67d 100%);
