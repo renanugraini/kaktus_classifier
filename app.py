@@ -185,7 +185,7 @@ if menu == "Informasi Kaktus":
     <li>Bentuknya sangat beragam: bulat, pipih, memanjang, hingga bercabang.</li>
 </ul>
 
-<h3>Kegunaan:<h3>
+<h3>Kegunaan:</h3>
 <ul> 
     <li>Tanaman hias: sebagai dekorasi rumah, taman, atau kamar tidur karena estetika dan perawatannya mudah.<li>
     <li>Konsumsi & Kesehatan: Buah dan daun muda kaktus (seperti pir berduri) bisa dimakan, kaya serat, vitamin, mineral untuk kesehatan.<li>
