@@ -26,10 +26,10 @@ page_bg = """
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(
         135deg,
-        #0b6040 0%,
-        #33a07a 35%,
-        #62c7a8 70%,
-        #9ef3d4 100%
+        #003a2a 0%,
+        #046342 35%,
+        #108a5d 70%,
+        #19b47a 100%
     ) !important;
     background-size: 200% 200%;
     animation: gradientMove 12s ease infinite;
