@@ -187,12 +187,10 @@ if menu == "Informasi Kaktus":
 
 <h3>Kegunaan:<h3>
 <ul> 
-    <li>Tanaman hias: sebagai dekorasi rumah, taman, atau kamar tidur 
-    karena estetika dan perawatannya mudah.<li>
-    <li>Konsumsi & Kesehatan: Buah dan daun muda kaktus (seperti pir berduri)
-    bisa dimakan, kaya serat, vitamin, mineral untuk kesehatan.<li>
+    <li>Tanaman hias: sebagai dekorasi rumah, taman, atau kamar tidur karena estetika dan perawatannya mudah.<li>
+    <li>Konsumsi & Kesehatan: Buah dan daun muda kaktus (seperti pir berduri) bisa dimakan, kaya serat, vitamin, mineral untuk kesehatan.<li>
     <li>Bisa juga digunakan dalam produk perawatan kulit.<li>
-<ul>
+</ul>
 
 <h3>Jenis Kaktus Tanaman Hias:</h3>
 <ul>
