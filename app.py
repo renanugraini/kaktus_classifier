@@ -115,6 +115,21 @@ ul li {
     stroke: #ffffff !important;
 }
 
+/* ===== FIX PALING AKURAT UNTUK TEKS DRAG & DROP ===== */
+[data-testid="stFileUploaderDropzone"] div {
+    color: #ffffff !important;
+}
+
+[data-testid="stFileUploaderDropzone"] span {
+    color: #ffffff !important;
+}
+
+[data-testid="stFileUploaderDropzone"] svg {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+
 </style>
 
 """
