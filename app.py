@@ -21,64 +21,12 @@ st.set_page_config(
 
 page_bg = """
 <style>
-/* Background image */
+/* LATAR BELAKANG WARNA HIJAU */
 [data-testid="stAppViewContainer"] {
-    background-image: url('https://i.ibb.co/s23bD7r/cactus-bg-green.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
+    background: linear-gradient(135deg, #0b6121 0%, #0d7a2a 40%, #0f8f33 100%);
 }
 
-/* Dark overlay */
-[data-testid="stAppViewContainer"]::before {
-    content: "";
-    position: absolute;
-    top:0; left:0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.45);
-    z-index: 0;
-}
-
-/* Bring content to front */
-.block-container {
-    position: relative;
-    z-index: 1;
-}
-
-/* Card style */
-.stCard {
-    background: rgba(0,0,0,0.35);
-    padding: 20px;
-    border-radius: 15px;
-    backdrop-filter: blur(6px);
-}
-
-/* Text color */
-h1, h2, h3, p, label, span {
-    color: #ecf0f1 !important;
-}
-
-/* Buttons */
-.st-emotion-cache-7ym5gk, .st-emotion-cache-7ym5gk:hover {
-    background-color: #27ae60 !important;
-    color: white !important;
-}
-
-/* Selectbox */
-.stSelectbox, .st-emotion-cache-1gulkj5 {
-    color: white !important;
-}
-
-/* Fix sidebar agar tidak ikut gelap */
-[data-testid="stSidebar"] {
-    background: rgba(0,0,0,0.25) !important;
-    backdrop-filter: blur(4px);
-}
-
-[data-testid="stSidebar"] * {
-    color: #ecf0f1 !important;
-}
-
-/* TEKS AGAR TERLIHAT */
+/* Agar teks tetap terlihat */
 h1, h2, h3, h4, h5, h6,
 p, span, label, li, strong, b {
     color: #ffffff !important;
@@ -87,6 +35,15 @@ p, span, label, li, strong, b {
 /* Label upload gambar */
 .stFileUploader label {
     color: #ffffff !important;
+}
+
+/* Kotak putih tempat gambar tetap elegan */
+.box {
+    background: rgba(255,255,255,0.15) !important;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+    backdrop-filter: blur(4px);
 }
 
 </style>
