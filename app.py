@@ -21,8 +21,7 @@ st.set_page_config(
 
 page_bg = """
 <style>
-page_bg = """
-<style>
+
 /* ===== Soft Green Background ===== */
 [data-testid="stAppViewContainer"] {
     background: linear-gradient(135deg, #1c8f4a 0%, #33a165 50%, #4fb67d 100%);
@@ -59,12 +58,6 @@ p, span, label, li, strong, b, div, textarea {
     box-shadow: 0px 4px 15px rgba(0,0,0,0.25);
 }
 
-/* ===== Input teks dan selectbox ===== */
-.stTextInput > div > div > input,
-.stSelectbox > div > div {
-    color: #ffffff !important;
-}
-
 /* ===== Buttons ===== */
 .stButton>button {
     background-color: #2ecc71 !important;
@@ -82,6 +75,7 @@ ul li {
     color: #ffffff !important;
     font-size: 16px;
 }
+
 
 </style>
 """
