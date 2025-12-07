@@ -176,6 +176,7 @@ if menu == "Informasi Kaktus":
         keluarga <i>Cactaceae</i>.
         </p>
         
+<h3>Fakta Menarik Kaktus:</h3>    
 <ul>
     <li>Kaktus dapat hidup hingga ratusan tahun.</li>
     <li>Beberapa kaktus dapat tumbuh lebih dari 20 meter.</li>
