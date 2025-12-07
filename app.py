@@ -89,12 +89,6 @@ ul li {
     border-radius: 12px !important;
 }
 
-[data-testid="stFileUploader"] * {
-    color: #ffffff !important;
-    fill: #ffffff !important;
-    stroke: #ffffff !important;
-}
-
 /* ===== BACKGROUND GELAP UNTUK H3 YANG DI DALAM CARD ===== */
 .stCard h3 {
     background: rgba(0,0,0,0.20) !important;
