@@ -123,14 +123,14 @@ ul li {
 
 /* ===== Styling Button Download PDF ===== */
 .stDownloadButton > button {
-    background-color: #ffffff !important;
+    background-color: #000000 !important;
     color: white !important;
     font-weight: bold;
     border-radius: 10px;
     border: 1px solid #000000 !important;
 }
 .stDownloadButton > button:hover {
-    background-color: #222222 !important;
+    background-color: #000000 !important;
 }
 
 
