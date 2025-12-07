@@ -58,6 +58,12 @@ p, span, label, li, strong, b, div, textarea {
     box-shadow: 0px 4px 15px rgba(0,0,0,0.25);
 }
 
+/* ===== Input teks dan selectbox ===== */
+.stTextInput > div > div > input,
+.stSelectbox > div > div {
+    color: #ffffff !important;
+}
+
 /* ===== Buttons ===== */
 .stButton>button {
     background-color: #2ecc71 !important;
@@ -76,8 +82,8 @@ ul li {
     font-size: 16px;
 }
 
-
 </style>
+
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
