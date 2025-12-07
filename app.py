@@ -22,13 +22,15 @@ st.set_page_config(
 page_bg = """
 <style>
 
-/* ===== Aesthetic Patterned Gradient ===== */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #166534 0%, #22c55e 100%),
-                url("https://www.transparenttextures.com/patterns/cubes.png");
-    background-size: cover, 300px;
-    opacity: 1;
+    background: 
+        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+        url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1500&q=80");
+    background-size: cover;
+    background-position: center;
+    filter: blur(0.1px);
 }
+
 
 /* ===== SIDEBAR ===== */
 [data-testid="stSidebar"] {
