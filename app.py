@@ -42,6 +42,14 @@ page_bg = """
     100% { background-position: 0% 50%; }
 }
 
+/* ===== Aesthetic Patterned Gradient ===== */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #166534 0%, #22c55e 100%),
+                url("https://www.transparenttextures.com/patterns/cubes.png");
+    background-size: cover, 300px;
+    opacity: 1;
+}
+
 /* ===== SIDEBAR ===== */
 [data-testid="stSidebar"] {
     background: rgba(0,0,0,0.25) !important;
