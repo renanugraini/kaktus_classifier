@@ -104,37 +104,22 @@ ul li {
     color: #ffffff !important;
 }
 
-/* ===== PERBAIKI TEKS PLACEHOLDER DRAG & DROP ===== */
-[data-testid="stFileUploader"] .uploadedFileContent,
-[data-testid="stFileUploader"] .uploadFileName,
-[data-testid="stFileUploader"] .fileUploadDropzone,
-[data-testid="stFileUploader"] .uploadDropzoneText,
-[data-testid="stFileUploader"] .uploadInstructions {
-    color: #ffffff !important;
-    fill: #ffffff !important;
-    stroke: #ffffff !important;
+/* ===== Make Drag & Drop text black for contrast ===== */
+[data-testid="stFileUploaderDropTarget"] *,
+[data-testid="stFileUploaderDropzone"] *,
+[data-testid="stFileUploader"] * {
+    color: #000000 !important;
+    fill: #000000 !important;
+    stroke: #000000 !important;
 }
 
-/* ===== FIX PALING AKURAT UNTUK TEKS DRAG & DROP ===== */
-[data-testid="stFileUploaderDropzone"] div {
-    color: #ffffff !important;
+/* also ensure the small helper spans are black */
+[data-testid="stFileUploaderDropTarget"] span,
+[data-testid="stFileUploaderDropzone"] span,
+[data-testid="stFileUploader"] span {
+    color: #000000 !important;
 }
 
-[data-testid="stFileUploaderDropzone"] span {
-    color: #ffffff !important;
-}
-
-[data-testid="stFileUploaderDropzone"] svg {
-    fill: #ffffff !important;
-    stroke: #ffffff !important;
-}
-
-/* ===== FIX UTAMA: Tekan semua teks di area dropzone ===== */
-[data-testid="stFileUploaderDropTarget"] * {
-    color: #ffffff !important;
-    fill: #ffffff !important;
-    stroke: #ffffff !important;
-}
 
 
 
