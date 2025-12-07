@@ -171,9 +171,10 @@ if menu == "Informasi Kaktus":
     <div class='stCard'>
         <h3>Apa itu Kaktus?</h3>
         <p>
-        Kaktus merupakan tanaman sukulen yang mampu bertahan hidup di lingkungan ekstrem seperti gurun.
-        Mereka menyimpan air di batangnya, memiliki duri sebagai bentuk adaptasi, dan termasuk dalam 
-        keluarga <i>Cactaceae</i>.
+        Kaktus merupakan tanaman sukulen unik yang terkenal karena durinya, kemampuan menyimpan air 
+        sebab itu mampu bertahan hidup di lingkungan ekstrem seperti gurun. Sering dijadikan tanaman
+        hias populer karena mudah dirawat dan estetik. Mereka menyimpan air di batangnya, memiliki duri 
+        sebagai bentuk adaptasi, dan termasuk dalam keluarga <i>Cactaceae</i>.
         </p>
         
 <h3>Fakta Menarik Kaktus:</h3>    
@@ -184,11 +185,19 @@ if menu == "Informasi Kaktus":
     <li>Bentuknya sangat beragam: bulat, pipih, memanjang, hingga bercabang.</li>
 </ul>
 
-<h3>Jenis Kaktus Yang Sering Dijumpai:</h3>
+<h3>Kegunaan:<h3>
+<ul> 
+    <li>Tanaman hias: sebagai dekorasi rumah, taman, atau kamar tidur 
+    karena estetika dan perawatannya mudah.<li>
+    <li>Konsumsi & Kesehatan: Buah dan daun muda kaktus (seperti pir berduri)
+    bisa dimakan, kaya serat, vitamin, mineral untuk kesehatan.<li>
+    <li>Bisa juga digunakan dalam produk perawatan kulit.<li>
+
+<h3>Jenis Kaktus Tanaman Hias:</h3>
 <ul>
-    <li><b>Cereus</b> – bentuk panjang menjulang seperti tiang.</li>
-    <li><b>Epiphyllum</b> – memiliki daun pipih & bunga besar.</li>
-    <li><b>Opuntia</b> – dikenal sebagai “prickly pear”, bentuk oval pipih.</li>
+    <li>Astrophytum Asteria.</li>
+    <li>Ferocactus.</li>
+    <li>Gymnocalycium.</li>
 </ul>
 """, unsafe_allow_html=True)
 
