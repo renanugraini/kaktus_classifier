@@ -98,35 +98,27 @@ ul li {
     color: #ffffff !important;
 }
 
-/* ==== FIX UTAMA UNTUK MENAMPILKAN ICON & TEKS ==== */
+/* ===== FIX TANPA KOTAK DI ICON UPLOAD ===== */
 
-/* Bikin area dropzone tetap transparan */
-[data-testid="stFileUploaderDropzone"] {
-    background: rgba(255,255,255,0.15) !important;
-    border: 2px dashed rgba(255,255,255,0.7) !important;
-    border-radius: 12px !important;
-    padding: 25px !important;
-}
-
-/* Warna TEKS drag & drop */
-[data-testid="stFileUploaderDropzone"] p,
-[data-testid="stFileUploaderDropzone"] span,
-[data-testid="stFileUploaderDropzone"] .uploadDropzoneText,
-[data-testid="stFileUploaderDropzone"] .uploadInstructions {
-    color: #000000 !important;
-    font-weight: 600 !important;
-}
-
-/* Icon upload bawaan Streamlit */
-[data-testid="stFileUploaderDropzone"] svg {
-    stroke: #000000 !important;
+/* Hilangkan fill di elemen-elemen icon */
+[data-testid="stFileUploaderDropzone"] svg rect,
+[data-testid="stFileUploaderDropzone"] svg path,
+[data-testid="stFileUploaderDropzone"] svg polygon,
+[data-testid="stFileUploaderDropzone"] svg line,
+[data-testid="stFileUploaderDropzone"] svg circle {
     fill: none !important;
+}
+
+/* Styling icon upload */
+[data-testid="stFileUploaderDropzone"] svg {
+    stroke: #ffffff !important;
+    background: transparent !important;
     width: 40px !important;
     height: 40px !important;
-    margin-bottom: 8px !important;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 10px !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 </style>
