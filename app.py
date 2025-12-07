@@ -25,7 +25,7 @@ page_bg = """
 [data-testid="stAppViewContainer"] {
     background: 
         linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-        url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1500&q=80");
+        url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?auto=format&fit=crop&w=1500&q=80");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
