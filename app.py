@@ -28,7 +28,7 @@ page_bg = """
         url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1500&q=80");
     background-size: cover;
     background-position: center;
-    filter: blur(0.1px);
+    background-attachment: fixed;
 }
 
 
