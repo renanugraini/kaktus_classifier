@@ -246,6 +246,7 @@ if menu == "🏠 Tentang Kaktus":
 # HALAMAN 2 — Prediksi Kaktus
 # ====================================================
 elif menu == "🌵 Prediksi Kaktus":
+st.markdown("<h1 style='text-align:center;'>🌵 Prediksi Jenis Kaktus</h1>", unsafe_allow_html=True)
 
     st.title("🌵 Prediksi Jenis Kaktus")
     uploaded = st.file_uploader("Upload gambar (jpg/png)", type=["jpg","png","jpeg"])
