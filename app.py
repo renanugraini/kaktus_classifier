@@ -129,6 +129,14 @@ ul li {
     stroke: #ffffff !important;
 }
 
+/* ===== FIX UTAMA: Tekan semua teks di area dropzone ===== */
+[data-testid="stFileUploaderDropTarget"] * {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+
 
 </style>
 
