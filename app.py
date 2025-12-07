@@ -115,6 +115,10 @@ ul li {
     stroke: #ffffff !important;
 }
 
+/* ===== FIX UTAMA: TEKS DRAG & DROP STREAMLIT ===== */
+[data-testid="stFileUploader"] .uploadInstructions {
+    color: #ffffff !important;
+}
 
 </style>
 
