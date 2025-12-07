@@ -109,15 +109,10 @@ ul li {
 [data-testid="stFileUploader"] .uploadFileName,
 [data-testid="stFileUploader"] .fileUploadDropzone,
 [data-testid="stFileUploader"] .uploadDropzoneText,
-[data-testid="stFileUploader"] span {
+[data-testid="stFileUploader"] .uploadInstructions {
     color: #ffffff !important;
     fill: #ffffff !important;
     stroke: #ffffff !important;
-}
-
-/* ===== FIX UTAMA: TEKS DRAG & DROP STREAMLIT ===== */
-[data-testid="stFileUploader"] .uploadInstructions {
-    color: #ffffff !important;
 }
 
 </style>
