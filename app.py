@@ -104,24 +104,17 @@ ul li {
     color: #ffffff !important;
 }
 
-/* ===== Make Drag & Drop text black for contrast ===== */
-[data-testid="stFileUploaderDropTarget"] *,
-[data-testid="stFileUploaderDropzone"] *,
-[data-testid="stFileUploader"] * {
+/* ===== FIX FINAL: Hanya ubah warna teks, bukan background ===== */
+[data-testid="stFileUploaderDropzone"] p,
+[data-testid="stFileUploaderDropzone"] span,
+[data-testid="stFileUploaderDropzone"] .uploadDropzoneText,
+[data-testid="stFileUploaderDropzone"] .uploadInstructions {
     color: #000000 !important;
-    fill: #000000 !important;
+}
+
+[data-testid="stFileUploaderDropzone"] svg {
     stroke: #000000 !important;
 }
-
-/* also ensure the small helper spans are black */
-[data-testid="stFileUploaderDropTarget"] span,
-[data-testid="stFileUploaderDropzone"] span,
-[data-testid="stFileUploader"] span {
-    color: #000000 !important;
-}
-
-
-
 
 </style>
 
