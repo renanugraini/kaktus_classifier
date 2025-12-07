@@ -171,10 +171,10 @@ if menu == "Informasi Kaktus":
     <div class='stCard'>
         <h3>Apa itu Kaktus?</h3>
         <p>
-        Kaktus merupakan tanaman sukulen unik yang terkenal karena durinya, kemampuan menyimpan air 
-        sebab itu mampu bertahan hidup di lingkungan ekstrem seperti gurun. Sering dijadikan tanaman
-        hias populer karena mudah dirawat dan estetik. Mereka menyimpan air di batangnya, memiliki duri 
-        sebagai bentuk adaptasi, dan termasuk dalam keluarga <i>Cactaceae</i>.
+        Kaktus merupakan tanaman sukulen unik yang terkenal karena kemampuan menyimpan air dan memiliki duri
+        sebagai bentuk adaptasi. Karena kemampuan tersebut, kaktus dapat bertahan hidup di lingkungan ekstrem 
+        seperti gurun. Selain tangguh, kaktus juga sering dijadikan tanaman hias karena mudah dirawat dan estetik. 
+        Tanaman ini termasuk dalam keluarga <i>Cactaceae</i>.
         </p>
         
 <h3>Fakta Menarik Kaktus:</h3>    
@@ -192,6 +192,7 @@ if menu == "Informasi Kaktus":
     <li>Konsumsi & Kesehatan: Buah dan daun muda kaktus (seperti pir berduri)
     bisa dimakan, kaya serat, vitamin, mineral untuk kesehatan.<li>
     <li>Bisa juga digunakan dalam produk perawatan kulit.<li>
+<ul>
 
 <h3>Jenis Kaktus Tanaman Hias:</h3>
 <ul>
@@ -199,6 +200,7 @@ if menu == "Informasi Kaktus":
     <li>Ferocactus.</li>
     <li>Gymnocalycium.</li>
 </ul>
+
 """, unsafe_allow_html=True)
 
 # =========================================================
