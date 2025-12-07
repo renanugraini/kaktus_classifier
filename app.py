@@ -239,3 +239,46 @@ elif menu == "Prediksi Kaktus":
         ax.set_title("Probabilitas per Kelas")
         st.pyplot(fig)
 
+        # ===== GENERATE PDF HASIL =====
+        buffer = io.BytesIO()
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import A4
+
+        c = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+
+        # Judul
+        c.setFont("Helvetica-Bold", 20)
+        c.drawString(80, height - 80, "Hasil Prediksi Kaktus")
+
+        # Gambar
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format="PNG")
+        img_bytes.seek(0)
+
+        from reportlab.lib.utils import ImageReader
+        cactus_img = ImageReader(img_bytes)
+        c.drawImage(cactus_img, 80, height - 380, width=200, height=200)
+
+        # Teks hasil
+        c.setFont("Helvetica", 14)
+        c.drawString(80, height - 420, f"Jenis Kaktus : {kelas}")
+
+        c.drawString(80, height - 450, "Probabilitas:")
+        y_text = height - 480
+        for lbl, prob in zip(labels, probs):
+            c.drawString(100, y_text, f"{lbl}: {prob:.4f}")
+            y_text -= 25
+
+        c.save()
+        buffer.seek(0)
+
+        # Tombol download
+        st.download_button(
+            label="📥 Download Hasil PDF",
+            data=buffer,
+            file_name="hasil_prediksi_kaktus.pdf",
+            mime="application/pdf"
+        )
+
+
