@@ -22,28 +22,96 @@ st.set_page_config(page_title="Klasifikasi Kaktus", page_icon="🌵", layout="ce
 st.markdown("""
 <style>
 
-body {
-    background-color: #f7f7f7;
+:root {
+    --cactus-green: #27ae60;
+    --cactus-green-dark: #1e874b;
+    --soft-green: #e9f7ef;
+    --dark-bg: #1c1c1c;
+    --dark-card: #242424;
+    --text-dark: #e6e6e6;
+    --text-light: #333;
 }
 
+/* Light mode default */
+body, .stApp {
+    background-color: var(--soft-green);
+    color: var(--text-light);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Box style */
+.box, .menu-box {
+    padding: 25px;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.07);
+    transition: 0.3s ease;
+}
+
+/* Hover effect cards */
+.box:hover, .menu-box:hover {
+    box-shadow: 0px 6px 25px rgba(0,0,0,0.12);
+}
+
+/* Titles */
+h1, h2, h3 {
+    color: var(--cactus-green-dark);
+    font-weight: bold;
+}
+
+/* Centered image */
 .centered-img {
     display: flex;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
-.box {
-    background: white;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.06);
+/* Selectbox styling */
+div[data-baseweb="select"] > div {
+    background-color: white !important;
+    border-radius: 10px !important;
+    border: 1.5px solid var(--cactus-green) !important;
 }
 
-.menu-box {
-    background: linear-gradient(135deg, #e8f8f5, #d1f2eb);
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
+/* Dark Mode Auto */
+@media (prefers-color-scheme: dark) {
+    body, .stApp {
+        background-color: var(--dark-bg) !important;
+        color: var(--text-dark) !important;
+    }
+
+    .box, .menu-box {
+        background: var(--dark-card) !important;
+        color: var(--text-dark) !important;
+        box-shadow: 0px 4px 20px rgba(255,255,255,0.05);
+    }
+
+    h1, h2, h3 {
+        color: var(--cactus-green) !important;
+    }
+
+    div[data-baseweb="select"] > div {
+        background-color: #2c2c2c !important;
+        border: 1.5px solid var(--cactus-green) !important;
+        color: white !important;
+    }
 }
+
+/* Button styling */
+.stButton>button {
+    background: var(--cactus-green) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    padding: 10px 18px !important;
+    border: none !important;
+    font-size: 16px !important;
+}
+.stButton>button:hover {
+    background: var(--cactus-green-dark) !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 </style>
 """, unsafe_allow_html=True)
