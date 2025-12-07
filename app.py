@@ -82,22 +82,16 @@ ul li {
     font-size: 16px;
 }
 
-/* ===== FIX TEKS "Drag and Drop file here" ===== */
-.stFileUploader div div,
-.stFileUploader .st-bb,
-.stFileUploader .st-bc,
-.stFileUploader .st-dc,
-.stFileUploader * {
+[data-testid="stFileUploader"] * {
     color: #ffffff !important;
-    font-weight: bold;
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
 }
 
-/* ===== FIX TEKS <h3> AGAR SELALU TERLIHAT ===== */
 h3 {
     color: #ffffff !important;
     font-weight: 700 !important;
 }
-
 
 </style>
 
